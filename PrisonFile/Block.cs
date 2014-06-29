@@ -8,17 +8,52 @@ namespace PrisonArchitect.PrisonFile
 {
     public class Block
     {
+        public string BlockName = "";
         public List<Block> Blocks = new List<Block>();
         public int CurrentDepth = 0;
         public bool Handled = false;
-        public string Name = "";
+
         public Block Parent = null;
         public string RawData = "";
         public Dictionary<string, object> Variables = new Dictionary<string, object>();
 
+        public Block()
+        {
+        }
+
+        public Block(Block b)
+        {
+            Blocks = b.Blocks;
+            CurrentDepth = b.CurrentDepth;
+            Handled = b.Handled;
+            BlockName = b.BlockName;
+            Parent = b.Parent;
+            RawData = b.RawData;
+            Variables = b.Variables;
+        }
+
+        public string BlockPath
+        {
+            get
+            {
+                string blockName = (BlockName.Contains("\"") ? GetType().Name : BlockName);
+                if (Parent != null && !string.IsNullOrEmpty(Parent.BlockName))
+                    return Parent.BlockPath + "." + blockName;
+                return blockName;
+            }
+        }
+
+        public List<string> FindUnusedVariables()
+        {
+            return
+                Variables.Keys.Where(
+                    key => !GetType().GetProperties().Select(prop => prop.Name).ToList().Contains(key.Replace(".", "_")))
+                    .ToList();
+        }
+
         public void ParseVariables()
         {
-            // remove all the sub-block raw data so we don't parse it
+            // remove all the sub-b raw data so we don't parse it
             string currentBlockRawData = Blocks.Aggregate(RawData,
                                                           (current, block) => current.Replace(block.RawData, ""));
 
@@ -28,9 +63,9 @@ namespace PrisonArchitect.PrisonFile
             {
                 string formattedLine = Regex.Replace(line.Trim(), @"\s+", " ").Trim();
 
-                // remove our BEGIN, Name, and END
-                if (formattedLine.StartsWith("BEGIN " + Name))
-                    formattedLine = formattedLine.Remove(0, ("BEGIN " + Name).Length).Trim();
+                // remove our BEGIN, BlockName, and END
+                if (formattedLine.StartsWith("BEGIN " + BlockName))
+                    formattedLine = formattedLine.Remove(0, ("BEGIN " + BlockName).Length).Trim();
                 if (formattedLine.EndsWith("END"))
                     formattedLine = formattedLine.Substring(0,
                                                             formattedLine.LastIndexOf("END", StringComparison.Ordinal));
@@ -62,30 +97,30 @@ namespace PrisonArchitect.PrisonFile
             }
         }
 
-        public void Print(bool logFormat = false)
+        public void Print(bool prisonFormat = false)
         {
-            if (logFormat)
+            if (prisonFormat)
             {
-                if (!string.IsNullOrEmpty(Name))
-                    MyConsole.WriteLine(new String(' ', CurrentDepth) + "BEGIN " + Name);
+                if (!string.IsNullOrEmpty(BlockName))
+                    MyConsole.WriteLine(new String(' ', CurrentDepth) + "BEGIN " + BlockName);
             }
             else
-                MyConsole.WriteLine(new String(' ', (CurrentDepth*2)) + "- " + Name);
-            PrintVariables(logFormat);
+                MyConsole.WriteLine(new String(' ', (CurrentDepth*2)) + "- " + BlockName);
+            PrintVariables(prisonFormat);
             foreach (Block block in Blocks)
-                block.Print(logFormat);
-            if (logFormat)
+                block.Print(prisonFormat);
+            if (prisonFormat)
                 MyConsole.WriteLine(new String(' ', CurrentDepth) + "END");
         }
 
-        private void PrintVariables(bool logFormat = false)
+        private void PrintVariables(bool prisonFormat = false)
         {
             foreach (KeyValuePair<string, object> keyValuePair in Variables)
             {
-                if (logFormat)
+                if (prisonFormat)
                 {
                     int extraIndent = 0;
-                    if (!string.IsNullOrEmpty(Name))
+                    if (!string.IsNullOrEmpty(BlockName))
                         extraIndent = 1;
                     MyConsole.WriteLine(new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " +
                                         keyValuePair.Value);
@@ -96,24 +131,61 @@ namespace PrisonArchitect.PrisonFile
             }
         }
 
-        public override string ToString()
+        public string Output()
         {
-            string s;
+            string s = "";
 
-            // if we haven't handled this block yet just spit out the raw data
+            // if we haven't handled this b yet just spit out the raw data
             if (!Handled)
             {
                 // need to remove our END and put it after our children's END
-                s = RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
-                s = Blocks.Aggregate(s, (current, block) => current + block);
+                s += RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
+                s += Blocks.Aggregate(s, (current, block) => current + block);
                 s += "END";
-                return s;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(BlockName))
+                    s += new string(' ', CurrentDepth*2) + "BEGIN " + BlockName + Environment.NewLine;
+                s += Variables.Aggregate(s,
+                                         (current, keyValuePair) =>
+                                         current +
+                                         (new string(' ', (CurrentDepth + 1)*2) + keyValuePair.Key + " " +
+                                          keyValuePair.Value + Environment.NewLine));
+                s += Blocks.Aggregate(s, (current, block) => current + block);
+                if (string.IsNullOrEmpty(BlockName))
+                    s += new string(' ', CurrentDepth*2) + "END" + Environment.NewLine;
             }
 
-            s = Variables.Aggregate("",
-                                    (current, keyValuePair) =>
-                                    current + (keyValuePair.Key + " " + keyValuePair.Value + Environment.NewLine));
-            return Blocks.Aggregate(s, (current, b) => current + b);
+            return s;
+        }
+
+        public override string ToString()
+        {
+            string s = "";
+
+#if DEBUG
+            List<string> unusedVariables = FindUnusedVariables();
+            if (Handled && unusedVariables.Count > 0)
+            {
+#endif
+                s += GetType().FullName + Environment.NewLine;
+                s += new string(' ', 2) + "BlockName : " + BlockName + Environment.NewLine;
+                s = Variables.Aggregate(s,
+                                        (current, keyValuePair) =>
+                                        current +
+                                        (new string(' ', 2) + keyValuePair.Key + " : " + keyValuePair.Value +
+                                         Environment.NewLine));
+#if DEBUG
+                s += new string(' ', 2) + new string('-', 10) + Environment.NewLine;
+                s = FindUnusedVariables().Aggregate(s,
+                                                    (current, key) =>
+                                                    current +
+                                                    (new string(' ', 2) + key + " : " + Variables[key] +
+                                                     Environment.NewLine));
+            }
+#endif
+            return s;
         }
     }
 }

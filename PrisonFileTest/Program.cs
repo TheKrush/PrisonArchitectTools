@@ -10,16 +10,19 @@ namespace PrisonFileTest
         {
             Console.BufferHeight = 10000;
 
-            MyConsole.UseConsole = false;
+            //MyConsole.UseConsole = false;
             MyConsole.Name = "Prison File Test";
 
             Console.WriteLine("Parsing .prison file");
-            PrisonFile prisonFile = new PrisonFile(@"C:\Users\Keith\AppData\Local\Introversion\Prison Architect\saves\test2.prison");
+            //PrisonFile prisonFile = new PrisonFile(@"C:\Users\Keith\AppData\Local\Introversion\Prison Architect\saves\test2.prison");
+            PrisonFile prisonFile = new PrisonFile(@"C:\Users\Keith\AppData\Local\Introversion\Prison Architect\saves\The Last Castle.prison");
 
+            prisonFile.DebugBlocks();
+            
             Console.WriteLine("Finished!");
             Console.WriteLine();
             Console.WriteLine("Press ENTER to exit");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }

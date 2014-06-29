@@ -105,7 +105,38 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
-    <Compile Include="Blocks\Cells.cs" />
+    <Compile Include="Blocks\Construction.cs" />
+    <Compile Include="Blocks\Contraband.cs" />
+    <Compile Include="Blocks\Grants.cs" />
+    <Compile Include="Blocks\Misconduct.cs" />
+    <Compile Include="Blocks\Reform.cs" />
+    <Compile Include="Blocks\Sectors.cs" />
+    <Compile Include="Blocks\Electricity.cs" />
+    <Compile Include="Blocks\Patrols.cs" />
+    <Compile Include="Blocks\Penalties.cs" />
+    <Compile Include="Blocks\Research.cs" />
+    <Compile Include="Blocks\Squads.cs" />
+    <Compile Include="Blocks\Thermometer.cs" />
+    <Compile Include="Blocks\Tunnels.cs" />
+    <Compile Include="Blocks\Visitation.cs" />
+    <Compile Include="Blocks\Water.cs" />
+    <Compile Include="HelperBlocks\BlockList.cs" />
+    <Compile Include="HelperBlocks\Cell.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Blocks\Cells.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Blocks\Finance.cs" />
+    <Compile Include="Blocks\Regime.cs" />
+    <Compile Include="Blocks\Rooms.cs" />
+    <Compile Include="Blocks\Objects.cs" />
+    <Compile Include="Blocks\SupplyChain.cs" />
+    <Compile Include="Blocks\Victory.cs" />
+    <Compile Include="Blocks\Visibility.cs" />
+    <Compile Include="Blocks\WorkQ.cs" />
+    <Compile Include="HelperBlocks\HandledBlock.cs" />
+    <Compile Include="HelperBlocks\Id.cs" />
     <Compile Include="PrisonFile.cs" />
     <Compile Include="PrisonFileParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
