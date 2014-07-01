@@ -43,6 +43,53 @@ namespace PrisonArchitect.PrisonFile
             }
         }
 
+        public string Output
+        {
+            get
+            {
+                string s = "";
+
+                if (BlockName == "\"[i 97]\"")
+                    MyConsole.WriteLine(BlockName);
+
+                // if we haven't handled this b yet just spit out the raw data
+                if (!Handled)
+                {
+                    // need to remove our END and put it after our children's END
+                    if (RawData.Contains("BEGIN"))
+                        s += RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
+                    else
+                        s += RawData;
+                    s = Blocks.Aggregate(s, (current, block) => current + block.Output);
+                    if (RawData.Contains("BEGIN"))
+                        s += "END" + Environment.NewLine;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(BlockName))
+                        s += new String(' ', CurrentDepth) + "BEGIN " + BlockName + Environment.NewLine;
+
+                    foreach (KeyValuePair<string, object> keyValuePair in Variables)
+                    {
+                        foreach (string value in keyValuePair.Value.ToString().Split(','))
+                        {
+                            int extraIndent = 0;
+                            if (!string.IsNullOrEmpty(BlockName)) extraIndent = 1;
+                            s += new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " + value +
+                                 Environment.NewLine;
+                        }
+                    }
+
+                    s = Blocks.Aggregate(s, (current, block) => current + block.Output);
+
+                    if (!string.IsNullOrEmpty(BlockName))
+                        s += new String(' ', CurrentDepth) + "END" + Environment.NewLine;
+                }
+
+                return s;
+            }
+        }
+
         public List<string> FindUnusedVariables()
         {
             return
@@ -91,7 +138,8 @@ namespace PrisonArchitect.PrisonFile
                     if (Regex.IsMatch(key, "\"([^\"]*)\"")) key = key.Replace("_", " ");
                     if (Regex.IsMatch(value, "\"([^\"]*)\"")) value = value.Replace("_", " ");
 
-                    if (Variables.ContainsKey(key)) Variables[key] = value;
+                    // some variables seem to appear more than once so we need to handle that
+                    if (Variables.ContainsKey(key)) Variables[key] = Variables[key] + "," + value;
                     else Variables.Add(key, value);
                 }
             }
@@ -117,62 +165,17 @@ namespace PrisonArchitect.PrisonFile
         {
             foreach (KeyValuePair<string, object> keyValuePair in Variables)
             {
-                if (prisonFormat)
+                foreach (string value in keyValuePair.Value.ToString().Split(','))
                 {
-                    int extraIndent = 0;
-                    if (!string.IsNullOrEmpty(BlockName))
-                        extraIndent = 1;
-                    MyConsole.WriteLine(new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " +
-                                        keyValuePair.Value);
-                }
-                else
-                    MyConsole.WriteLine(new String(' ', (CurrentDepth + 1)*2) + keyValuePair.Key + " = " +
-                                        keyValuePair.Value);
-            }
-        }
-
-        public string Output
-        {
-            get
-            {
-                string s = "";
-
-#if DEBUG
-                // if we haven't handled this b yet just spit out the raw data
-                if (!Handled)
-                {
-                    // need to remove our END and put it after our children's END
-                    if (RawData.Contains("BEGIN"))
-                        s += RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
-                    else
-                        s += RawData;
-                    s += Blocks.Aggregate(s, (current, block) => current + block.Output);
-                    if (RawData.Contains("BEGIN"))
-                        s += "END";
-                }
-                else
-                {
-#endif
-                    if (!string.IsNullOrEmpty(BlockName))
-                        s += new String(' ', CurrentDepth) + "BEGIN " + BlockName + Environment.NewLine;
-
-                    foreach (KeyValuePair<string, object> keyValuePair in Variables)
+                    if (prisonFormat)
                     {
                         int extraIndent = 0;
-                        if (!string.IsNullOrEmpty(BlockName))
-                            extraIndent = 1;
-                        s += new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " + keyValuePair.Value + Environment.NewLine;
+                        if (!string.IsNullOrEmpty(BlockName)) extraIndent = 1;
+                        MyConsole.WriteLine(new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " + value);
                     }
-
-                    s = Blocks.Aggregate(s, (current, block) => current + block.Output);
-
-                    if (!string.IsNullOrEmpty(BlockName))
-                        s += new String(' ', CurrentDepth) + "END" + Environment.NewLine;
-#if DEBUG
+                    else
+                        MyConsole.WriteLine(new String(' ', (CurrentDepth + 1)*2) + keyValuePair.Key + " = " + value);
                 }
-#endif
-
-                return s;
             }
         }
 
@@ -180,19 +183,19 @@ namespace PrisonArchitect.PrisonFile
         {
             string s = "";
 
-#if DEBUG
             List<string> unusedVariables = FindUnusedVariables();
             if (Handled && unusedVariables.Count > 0)
             {
-#endif
                 s += GetType().FullName + Environment.NewLine;
                 s += new string(' ', 2) + "BlockName : " + BlockName + Environment.NewLine;
                 s = Variables.Aggregate(s,
-                                        (current, keyValuePair) =>
-                                        current +
-                                        (new string(' ', 2) + keyValuePair.Key + " : " + keyValuePair.Value +
-                                         Environment.NewLine));
-#if DEBUG
+                                        (current1, keyValuePair) =>
+                                        keyValuePair.Value.ToString().Split(',').Aggregate(current1,
+                                                                                           (current, value) =>
+                                                                                           current +
+                                                                                           (new String(' ', 2) +
+                                                                                            keyValuePair.Key + " : " +
+                                                                                            value + Environment.NewLine)));
                 s += new string(' ', 2) + new string('-', 10) + Environment.NewLine;
                 s = FindUnusedVariables().Aggregate(s,
                                                     (current, key) =>
@@ -200,7 +203,6 @@ namespace PrisonArchitect.PrisonFile
                                                     (new string(' ', 2) + key + " : " + Variables[key] +
                                                      Environment.NewLine));
             }
-#endif
             return s;
         }
     }

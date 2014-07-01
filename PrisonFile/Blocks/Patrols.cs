@@ -5,13 +5,7 @@ namespace PrisonArchitect.PrisonFile.Blocks
 {
     public class Patrols : HandledBlock
     {
-        #region Nested type: Stations
-
-        public class Stations : HandledBlock
-        {
-        }
-
-        #endregion
+        #region Nested type: Cell
 
         public class Cell : HelperBlocks.Cell
         {
@@ -25,5 +19,15 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
             #endregion Variables
         }
+
+        #endregion
+
+        #region Nested type: Stations
+
+        public class Stations : HandledBlock
+        {
+        }
+
+        #endregion
     }
 }

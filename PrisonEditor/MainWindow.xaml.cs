@@ -67,7 +67,7 @@ namespace PrisonEditor
 
             MapCell.UnknownMaterials =
                 _prisonFile.Cells.Blocks.Cast<Cells.Cell>().Select(cell => cell.Material).Distinct().Where(
-                    material => !string.IsNullOrEmpty(material) && !MapCell.Materials.Contains(material)).ToList();
+                    material => !string.IsNullOrEmpty(material) && !Cells.Cell.Materials.Contains(material)).ToList();
 
             MapCell.PreloadMaterialBitmaps();
             UpdateMaterialsListView();
@@ -81,7 +81,7 @@ namespace PrisonEditor
         {
             MaterialListView.Items.Clear();
             List<string> allMaterials =
-                new List<string>(MapCell.Materials).Concat(MapCell.UnknownMaterials).OrderBy(material => material).
+                new List<string>(Cells.Cell.Materials).Concat(MapCell.UnknownMaterials).OrderBy(material => material).
                     Distinct().ToList();
             foreach (string material in allMaterials)
             {

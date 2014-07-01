@@ -122,6 +122,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
             #endregion Variables
 
+            #region Nested type: SubLog
+
             public class SubLog : HandledBlock
             {
                 #region Variables
@@ -140,6 +142,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                 #endregion Variables
             }
+
+            #endregion
         }
 
         #endregion

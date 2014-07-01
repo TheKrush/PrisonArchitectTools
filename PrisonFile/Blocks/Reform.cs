@@ -27,23 +27,42 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Programs : BlockList
         {
+            #region Nested type: Program
+
             public class Program : HandledBlock
             {
+                #region Nested type: Objects
+
                 public class Objects : HandledBlock
                 {
+                    #region Nested type: Object
+
                     public class Object : Id
                     {
-                        
                     }
+
+                    #endregion
                 }
+
+                #endregion
+
+                #region Nested type: Students
 
                 public class Students : HandledBlock
                 {
+                    #region Nested type: Student
+
                     public class Student : HandledBlock
                     {
                     }
+
+                    #endregion
                 }
+
+                #endregion
             }
+
+            #endregion
         }
 
         #endregion
@@ -52,6 +71,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Reports : HandledBlock
         {
+            #region Nested type: Base
+
             public class Base : HandledBlock
             {
                 #region Variables
@@ -77,15 +98,23 @@ namespace PrisonArchitect.PrisonFile.Blocks
                 #endregion Variables
             }
 
-            public class WorkshopInduction : Base
-            {
-                
-            }
+            #endregion
+
+            #region Nested type: Therapy
 
             public class Therapy : Base
             {
-                 
             }
+
+            #endregion
+
+            #region Nested type: WorkshopInduction
+
+            public class WorkshopInduction : Base
+            {
+            }
+
+            #endregion
         }
 
         #endregion

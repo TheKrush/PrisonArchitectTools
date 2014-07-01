@@ -19,7 +19,7 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Items : BlockList
         {
-            #region Nested type: Job
+            #region Nested type: Item
 
             public class Item : HandledBlock
             {

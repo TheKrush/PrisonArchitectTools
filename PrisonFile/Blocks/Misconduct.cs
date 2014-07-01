@@ -19,15 +19,27 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class MisconductReports : BlockList
         {
+            #region Nested type: MisconductReport
+
             public class MisconductReport : HandledBlock
             {
+                #region Nested type: MisconductEntries
+
                 public class MisconductEntries : BlockList
                 {
+                    #region Nested type: MisconductEntry
+
                     public class MisconductEntry : HandledBlock
                     {
                     }
+
+                    #endregion
                 }
+
+                #endregion
             }
+
+            #endregion
         }
 
         #endregion

@@ -24,10 +24,13 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class PlanningJobs : BlockList
         {
+            #region Nested type: Job
+
             public class Job : HandledBlock
             {
-                
             }
+
+            #endregion
         }
 
         #endregion

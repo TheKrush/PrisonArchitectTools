@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.Blocks;
 
@@ -172,6 +171,11 @@ namespace PrisonArchitect.PrisonFile
             get { return _block.Blocks.Find(block => block.BlockName == "Cells") as Cells; }
         }
 
+        public Objects Objects
+        {
+            get { return _block.Blocks.Find(block => block.BlockName == "Objects") as Objects; }
+        }
+
         #endregion Variables
 
         private readonly Block _block;
@@ -197,13 +201,17 @@ namespace PrisonArchitect.PrisonFile
             }
 
 #if DEBUG
+            string s = Output;
             MyConsole.WriteLogFile();
 #endif
         }
 
         public string FileName { get; set; }
 
-        public string Output { get { return _block.Output; } }
+        public string Output
+        {
+            get { return _block.Output; }
+        }
 
         public void DebugBlocks()
         {
@@ -216,7 +224,7 @@ namespace PrisonArchitect.PrisonFile
 
         private void DebugBlock(Block block)
         {
-            if (block.GetType() == typeof(Block) && !string.IsNullOrEmpty(block.BlockName))
+            if (block.GetType() == typeof (Block) && !string.IsNullOrEmpty(block.BlockName))
             {
                 string fullName = block.BlockName;
                 Block tempBlock = block.Parent;

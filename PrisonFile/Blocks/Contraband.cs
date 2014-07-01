@@ -25,16 +25,27 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class HistoricalTrackers : BlockList
         {
+            #region Nested type: HistoricalTracker
+
             public class HistoricalTracker : HandledBlock
             {
+                #region Nested type: Log
+
                 public class Log : HandledBlock
                 {
+                    #region Nested type: SubLog
+
                     public class SubLog : HandledBlock
                     {
-
                     }
+
+                    #endregion
                 }
+
+                #endregion
             }
+
+            #endregion
         }
 
         #endregion
@@ -43,10 +54,13 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Prisoners : BlockList
         {
+            #region Nested type: Prisoner
+
             public class Prisoner : HandledBlock
             {
-                
             }
+
+            #endregion
         }
 
         #endregion
@@ -55,16 +69,27 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Trackers : BlockList
         {
+            #region Nested type: Tracker
+
             public class Tracker : HandledBlock
             {
+                #region Nested type: Log
+
                 public class Log : HandledBlock
                 {
+                    #region Nested type: SubLog
+
                     public class SubLog : HandledBlock
                     {
-                        
                     }
+
+                    #endregion
                 }
+
+                #endregion
             }
+
+            #endregion
         }
 
         #endregion

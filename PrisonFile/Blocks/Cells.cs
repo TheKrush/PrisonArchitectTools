@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.HelperBlocks;
 
@@ -15,6 +17,46 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class Cell : HelperBlocks.Cell
         {
+            #region EMaterial enum
+
+            public enum EMaterial
+            {
+// ReSharper disable InconsistentNaming
+                BrickWall,
+                CeramicFloor,
+                ConcreteFloor,
+                ConcreteTiles,
+                ConcreteWall,
+                Dirt,
+                FancyTiles,
+                Fence,
+                Grass,
+                Gravel,
+                LongGrass,
+                MarbleTiles,
+                MetalFloor,
+                MosaicFloor,
+                PavingStone,
+                PerimeterWall,
+                Road,
+                RoadMarkings,
+                RoadMarkingsLeft,
+                RoadMarkingsRight,
+                Sand,
+                Stone,
+                Water,
+                WhiteTiles,
+                WoodenFloor,
+// ReSharper restore InconsistentNaming
+            }
+
+            #endregion
+
+            public static List<string> Materials
+            {
+                get { return Enum.GetNames(typeof (EMaterial)).ToList(); }
+            }
+
             #region Variables
 
             public string Mat
@@ -30,7 +72,45 @@ namespace PrisonArchitect.PrisonFile.Blocks
                         throw ex;
                     }
                 }
-                set { Variables["Mat"] = value; }
+                set
+                {
+                    value = string.IsNullOrEmpty(value) ? "Dirt" : value;
+
+                    EMaterial material = (EMaterial) Enum.Parse(typeof (EMaterial), value);
+                    switch (material)
+                    {
+                        case EMaterial.CeramicFloor:
+                        case EMaterial.ConcreteFloor:
+                        case EMaterial.FancyTiles:
+                        case EMaterial.MarbleTiles:
+                        case EMaterial.MetalFloor:
+                        case EMaterial.MosaicFloor:
+                        case EMaterial.WhiteTiles:
+                        case EMaterial.WoodenFloor:
+                            Indoors = true;
+                            break;
+
+                        case EMaterial.Dirt:
+                        case EMaterial.Fence:
+                        case EMaterial.Grass:
+                        case EMaterial.Gravel:
+                        case EMaterial.LongGrass:
+                        case EMaterial.PerimeterWall:
+                        case EMaterial.Road:
+                        case EMaterial.RoadMarkings:
+                        case EMaterial.RoadMarkingsLeft:
+                        case EMaterial.RoadMarkingsRight:
+                        case EMaterial.Sand:
+                        case EMaterial.Stone:
+                        case EMaterial.Water:
+                            Indoors = false;
+                            break;
+                    }
+
+                    // dirt is the absence of a material variable
+                    if (value == "Dirt") value = null;
+                    Variables["Mat"] = value;
+                }
             }
 
             public string Material

@@ -5,6 +5,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 {
     public class Water : HandledBlock
     {
+        #region Nested type: Cell
+
         public class Cell : HelperBlocks.Cell
         {
             #region Variables
@@ -29,5 +31,7 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
             #endregion Variables
         }
+
+        #endregion
     }
 }

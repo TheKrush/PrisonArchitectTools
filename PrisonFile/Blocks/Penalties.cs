@@ -19,6 +19,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         public class SubPenalties : BlockList
         {
+            #region Nested type: Item
+
             public class Item : HandledBlock
             {
                 #region Variables
@@ -59,6 +61,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                 #endregion Variables
             }
+
+            #endregion
         }
 
         #endregion

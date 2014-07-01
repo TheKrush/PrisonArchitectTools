@@ -15,9 +15,12 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
         #endregion Variables
 
+        #region Nested type: SubVisitation
+
         public class SubVisitation : HandledBlock
         {
-            
         }
+
+        #endregion
     }
 }

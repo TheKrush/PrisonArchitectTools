@@ -111,6 +111,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                 public class Jobs : BlockList
                 {
+                    #region Nested type: Job
+
                     public class Job : HandledBlock
                     {
                         #region Variables
@@ -139,6 +141,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                         #endregion Variables
                     }
+
+                    #endregion
                 }
 
                 #endregion
@@ -147,6 +151,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                 public class Stations : BlockList
                 {
+                    #region Nested type: Station
+
                     public class Station : HandledBlock
                     {
                         #region Variables
@@ -159,7 +165,7 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                         // ReSharper disable InconsistentNaming
                         public int Entity_i
-                        // ReSharper restore InconsistentNaming
+                            // ReSharper restore InconsistentNaming
                         {
                             get { return Variables["Entity.i"].SafeParse<int>(); }
                             set { Variables["Entity.i"] = value; }
@@ -167,7 +173,7 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                         // ReSharper disable InconsistentNaming
                         public float Entity_u
-                        // ReSharper restore InconsistentNaming
+                            // ReSharper restore InconsistentNaming
                         {
                             get { return Variables["Entity.u"].SafeParse<float>(); }
                             set { Variables["Entity.u"] = value; }
@@ -175,6 +181,8 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
                         #endregion Variables
                     }
+
+                    #endregion
                 }
 
                 #endregion

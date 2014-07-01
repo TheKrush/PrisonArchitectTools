@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -15,64 +17,6 @@ namespace PrisonEditor
     /// </summary>
     public partial class MapCell : UserControl
     {
-        public static List<string> Materials = new List<string>
-                                                   {
-                                                       "BrickWall",
-                                                       "CeramicFloor",
-                                                       "ConcreteFloor",
-                                                       "ConcreteTiles",
-                                                       "ConcreteWall",
-                                                       "Dirt",
-                                                       "FancyTiles",
-                                                       "Fence",
-                                                       "Grass",
-                                                       "Gravel",
-                                                       "LongGrass",
-                                                       "MarbleTiles",
-                                                       "MetalFloor",
-                                                       "MosaicFloor",
-                                                       "PavingStone",
-                                                       "PerimeterWall",
-                                                       "Road",
-                                                       "RoadMarkings",
-                                                       "RoadMarkingsLeft",
-                                                       "RoadMarkingsRight",
-                                                       "Sand",
-                                                       "Stone",
-                                                       "Water",
-                                                       "WhiteTiles",
-                                                       "WoodenFloor",
-                                                   };
-
-        public static List<string> IndoorMaterials = new List<string>
-                                                         {
-                                                             "CeramicFloor",
-                                                             "ConcreteFloor",
-                                                             "FancyTiles",
-                                                             "MarbleTiles",
-                                                             "MetalFloor",
-                                                             "MosaicFloor",
-                                                             "WhiteTiles",
-                                                             "WoodenFloor",
-                                                         };
-
-        public static List<string> OutdoorMaterials = new List<string>
-                                                          {
-                                                              "Dirt",
-                                                              "Fence",
-                                                              "Grass",
-                                                              "Gravel",
-                                                              "LongGrass",
-                                                              "PerimeterWall",
-                                                              "Road",
-                                                              "RoadMarkings",
-                                                              "RoadMarkingsLeft",
-                                                              "RoadMarkingsRight",
-                                                              "Sand",
-                                                              "Stone",
-                                                              "Water",
-                                                          };
-
         public static List<string> UnknownMaterials = new List<string>();
 
         public static Dictionary<string, BitmapImage> MaterialBitmapImage = new Dictionary<string, BitmapImage>();
@@ -138,10 +82,6 @@ namespace PrisonEditor
             {
                 _cell.Material = value == "Dirt" ? null : value;
 
-                // some materials are only indoors
-                if (IndoorMaterials.Contains(Material)) _cell.Indoors = true;
-                else if (OutdoorMaterials.Contains(Material)) _cell.Indoors = false;
-
                 TileImage.Source = MaterialBitmapImage.ContainsKey(Material)
                                        ? MaterialBitmapImage[Material]
                                        : MaterialBitmapImage["Unknown"];
@@ -151,7 +91,7 @@ namespace PrisonEditor
         public static void PreloadMaterialBitmaps()
         {
             AddMaterialToDictionary("Unknown");
-            foreach (string material in Materials)
+            foreach (string material in Enum.GetNames(typeof(Cells.Cell.EMaterial)).ToList())
                 AddMaterialToDictionary(material);
         }
 
@@ -187,7 +127,7 @@ namespace PrisonEditor
 
             _contextMenu.Items.Clear();
 
-            foreach (string material in Materials)
+            foreach (string material in Cells.Cell.Materials)
             {
                 MenuItem menuItem = new MenuItem
                                         {
