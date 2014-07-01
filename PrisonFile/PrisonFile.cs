@@ -182,7 +182,6 @@ namespace PrisonArchitect.PrisonFile
             FileName = filename;
 
             MyConsole.WriteLine(filename);
-            MyConsole.WriteLine(new string('-', Console.BufferWidth - 1));
 
             // Read the file and display it line by line.
             StreamReader file = new StreamReader(filename);
@@ -195,16 +194,16 @@ namespace PrisonArchitect.PrisonFile
             {
                 MyConsole.WriteLine("Code was created for version " + GameVersion + " not " + Version +
                                     " problems may occur");
-                MyConsole.WriteLine(new string('-', Console.BufferWidth - 1));
             }
 
 #if DEBUG
             MyConsole.WriteLogFile();
 #endif
-            MyConsole.WriteLine(new string('-', Console.BufferWidth - 1));
         }
 
         public string FileName { get; set; }
+
+        public string Output { get { return _block.Output; } }
 
         public void DebugBlocks()
         {

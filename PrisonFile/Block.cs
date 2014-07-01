@@ -15,7 +15,7 @@ namespace PrisonArchitect.PrisonFile
 
         public Block Parent = null;
         public string RawData = "";
-        public Dictionary<string, object> Variables = new Dictionary<string, object>();
+        public SafeDictionary<string, object> Variables = new SafeDictionary<string, object>();
 
         public Block()
         {
@@ -131,33 +131,49 @@ namespace PrisonArchitect.PrisonFile
             }
         }
 
-        public string Output()
+        public string Output
         {
-            string s = "";
-
-            // if we haven't handled this b yet just spit out the raw data
-            if (!Handled)
+            get
             {
-                // need to remove our END and put it after our children's END
-                s += RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
-                s += Blocks.Aggregate(s, (current, block) => current + block);
-                s += "END";
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(BlockName))
-                    s += new string(' ', CurrentDepth*2) + "BEGIN " + BlockName + Environment.NewLine;
-                s += Variables.Aggregate(s,
-                                         (current, keyValuePair) =>
-                                         current +
-                                         (new string(' ', (CurrentDepth + 1)*2) + keyValuePair.Key + " " +
-                                          keyValuePair.Value + Environment.NewLine));
-                s += Blocks.Aggregate(s, (current, block) => current + block);
-                if (string.IsNullOrEmpty(BlockName))
-                    s += new string(' ', CurrentDepth*2) + "END" + Environment.NewLine;
-            }
+                string s = "";
 
-            return s;
+#if DEBUG
+                // if we haven't handled this b yet just spit out the raw data
+                if (!Handled)
+                {
+                    // need to remove our END and put it after our children's END
+                    if (RawData.Contains("BEGIN"))
+                        s += RawData.Substring(0, RawData.LastIndexOf("END", StringComparison.Ordinal));
+                    else
+                        s += RawData;
+                    s += Blocks.Aggregate(s, (current, block) => current + block.Output);
+                    if (RawData.Contains("BEGIN"))
+                        s += "END";
+                }
+                else
+                {
+#endif
+                    if (!string.IsNullOrEmpty(BlockName))
+                        s += new String(' ', CurrentDepth) + "BEGIN " + BlockName + Environment.NewLine;
+
+                    foreach (KeyValuePair<string, object> keyValuePair in Variables)
+                    {
+                        int extraIndent = 0;
+                        if (!string.IsNullOrEmpty(BlockName))
+                            extraIndent = 1;
+                        s += new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " + keyValuePair.Value + Environment.NewLine;
+                    }
+
+                    s = Blocks.Aggregate(s, (current, block) => current + block.Output);
+
+                    if (!string.IsNullOrEmpty(BlockName))
+                        s += new String(' ', CurrentDepth) + "END" + Environment.NewLine;
+#if DEBUG
+                }
+#endif
+
+                return s;
+            }
         }
 
         public override string ToString()

@@ -1,4 +1,5 @@
-﻿using PrisonArchitect.Helper;
+﻿using System;
+using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.HelperBlocks;
 
 namespace PrisonArchitect.PrisonFile.Blocks
@@ -18,7 +19,17 @@ namespace PrisonArchitect.PrisonFile.Blocks
 
             public string Mat
             {
-                get { return Variables["Mat"].SafeParse<string>(); }
+                get
+                {
+                    try
+                    {
+                        return Variables["Mat"].SafeParse<string>();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
                 set { Variables["Mat"] = value; }
             }
 
