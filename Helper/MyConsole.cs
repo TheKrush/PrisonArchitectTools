@@ -57,6 +57,7 @@ namespace PrisonArchitect.Helper
         public static void Write(string line = "")
         {
             if (UseConsole) Console.Write(line);
+            Output += line;
         }
 
         public static void WriteLine(string line = "", bool clear = false)
