@@ -87,8 +87,10 @@ namespace PrisonArchitect.PrisonFile
                 if (formattedLine.StartsWith("BEGIN " + BlockName))
                     formattedLine = formattedLine.Remove(0, ("BEGIN " + BlockName).Length).Trim();
                 if (formattedLine.EndsWith("END"))
+                {
                     formattedLine = formattedLine.Substring(0,
                                                             formattedLine.LastIndexOf("END", StringComparison.Ordinal));
+                }
 
                 // temporarily replace these spaces with underscores
                 foreach (Match match in Regex.Matches(formattedLine, "\"([^\"]*)\""))

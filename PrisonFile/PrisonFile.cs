@@ -67,6 +67,8 @@ namespace PrisonArchitect.PrisonFile
 
         public IEnumerable<Cell> Cells { get { return _block.Blocks.First(block => block.BlockName == "Cells").Blocks.Select(block => new Cell(block)); } }
 
+        public Finance Finance { get { return new Finance(_block.Blocks.First(block => block.BlockName == "Finance")); } }
+
         public IEnumerable<ObjectBase> Objects
         {
             get
@@ -112,8 +114,11 @@ namespace PrisonArchitect.PrisonFile
             if (GameVersion != Version) MyConsole.WriteLine("Code was created for version " + GameVersion + " not " + Version + " problems may occur");
 
 #if DEBUG
-            // this fun little piece of code lets me see any variables I haven't wrapped yet
+            foreach(Block block in _block.Blocks.OrderBy(block => block.BlockName))
+                MyConsole.WriteLine(block.BlockName);
+            MyConsole.WriteLine(new string('-', filename.Length));
 
+            // this fun little piece of code lets me see any variables I haven't wrapped yet
             List<ObjectBase> test = Objects.OrderBy(o => o.Type).ToList();
             foreach (string t in test.Select(o => o.Type).Distinct().OrderBy(type => type))
             {

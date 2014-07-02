@@ -28,11 +28,11 @@ namespace PrisonArchitect.PrisonFile
                     name = name.Trim();
 
                     _currentBlock = new Block
-                                        {
-                                            BlockName = name,
-                                            CurrentDepth = _currentBlock.CurrentDepth + 1,
-                                            Parent = _currentBlock
-                                        };
+                                    {
+                                        BlockName = name,
+                                        CurrentDepth = _currentBlock.CurrentDepth + 1,
+                                        Parent = _currentBlock
+                                    };
 
                     _currentBlock.Parent.Blocks.Add(_currentBlock);
                 }

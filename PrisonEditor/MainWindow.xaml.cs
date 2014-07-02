@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -22,7 +23,7 @@ namespace PrisonEditor
     {
         private readonly AssemblyInformation _assemblyInformation = new AssemblyInformation();
         private PrisonFile _prisonFile;
-        private int _tileSize = 16;
+        private int _tileSize = 32;
 
         public MainWindow()
         {
@@ -278,8 +279,11 @@ namespace PrisonEditor
                                                            UpdateMaterialsListView();
                                                            UpdateMapCanvas();
 
+                                                           Finance.DataContext = _prisonFile.Finance;
+
                                                            MapOverlayGrid.Visibility = Visibility.Collapsed;
-                                                           IsEnabled = SaveMenu.IsEnabled = SaveAsMenu.IsEnabled = MapMenu.IsEnabled = MapGrid.IsEnabled = true;
+                                                           SaveMenu.IsEnabled = SaveAsMenu.IsEnabled = MapMenu.IsEnabled = MainTabControl.IsEnabled = true;
+                                                           IsEnabled = true;
                                                        };
             backgroundWorker.RunWorkerAsync(filename);
 
@@ -311,7 +315,7 @@ namespace PrisonEditor
             backgroundWorker.RunWorkerCompleted += (o, args) =>
                                                        {
                                                            MapOverlayGrid.Visibility = Visibility.Collapsed;
-                                                           IsEnabled = SaveMenu.IsEnabled = SaveAsMenu.IsEnabled = MapMenu.IsEnabled = MapGrid.IsEnabled = true;
+                                                           IsEnabled = true;
                                                        };
             backgroundWorker.RunWorkerAsync(filename);
 

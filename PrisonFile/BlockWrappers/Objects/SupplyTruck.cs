@@ -10,16 +10,16 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Objects
             ProcessingRoomId = new Id(block, "ProcessingRoomId");
 
             Slot = new[]
-                       {
-                           new Id(block, "Slot0"),
-                           new Id(block, "Slot1"),
-                           new Id(block, "Slot2"),
-                           new Id(block, "Slot3"),
-                           new Id(block, "Slot4"),
-                           new Id(block, "Slot5"),
-                           new Id(block, "Slot6"),
-                           new Id(block, "Slot7"),
-                       };
+                   {
+                       new Id(block, "Slot0"),
+                       new Id(block, "Slot1"),
+                       new Id(block, "Slot2"),
+                       new Id(block, "Slot3"),
+                       new Id(block, "Slot4"),
+                       new Id(block, "Slot5"),
+                       new Id(block, "Slot6"),
+                       new Id(block, "Slot7"),
+                   };
         }
 
         public Id ProcessingRoomId { get; set; }

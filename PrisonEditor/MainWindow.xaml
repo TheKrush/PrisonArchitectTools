@@ -8,65 +8,263 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <Menu Name="MainMenu" Grid.Row="0">
+        <Menu x:Name="MainMenu" Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="Open" Click="MenuItemFileOpen_Click"></MenuItem>
-                <MenuItem Name="SaveMenu" Header="Save" Click="MenuItemFileSave_Click" IsEnabled="False"></MenuItem>
-                <MenuItem Name="SaveAsMenu" Header="Save As" Click="MenuItemFileSaveAs_Click" IsEnabled="False"></MenuItem>
+                <MenuItem x:Name="SaveMenu" Header="Save" Click="MenuItemFileSave_Click" IsEnabled="False"></MenuItem>
+                <MenuItem x:Name="SaveAsMenu" Header="Save As" Click="MenuItemFileSaveAs_Click" IsEnabled="False"></MenuItem>
                 <Separator></Separator>
                 <MenuItem Header="Exit" Click="MenuItemFileExit_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Name="MapMenu" Header="Map" IsEnabled="False">
+            <MenuItem x:Name="MapMenu" Header="Map" IsEnabled="False">
                 <MenuItem Header="Tile Size">
                     <MenuItem Header="16x16" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
-                              Checked="MenuItemMapTileSize_Checked" IsChecked="True"></MenuItem>
-                    <MenuItem Header="32x32" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
                               Checked="MenuItemMapTileSize_Checked"></MenuItem>
+                    <MenuItem Header="32x32" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
+                              Checked="MenuItemMapTileSize_Checked" IsChecked="True"></MenuItem>
                     <MenuItem Header="64x64" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
                               Checked="MenuItemMapTileSize_Checked"></MenuItem>
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="2.5">
-            <Grid Name="MapGrid" IsEnabled="False">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="128"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="128"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <ScrollViewer Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Auto">
-                    <Canvas Name="MapCanvas" Background="Gray" MouseLeftButtonDown="MapCanvas_LeftButtonMouseDown"
-                            MouseMove="MapCanvas_MouseMove" />
-                </ScrollViewer>
-                <Grid Name="MapOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" Background="Black"
-                      Opacity="0.75">
-                    <TextBlock Name="MapOverlayTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               TextAlignment="Center" Foreground="White" FontSize="50">No prison loaded!</TextBlock>
-                </Grid>
-                <TextBlock Name="MaterialTextBlock" Grid.Row="0" Grid.Column="1" TextAlignment="Center"></TextBlock>
-                <Image Name="MaterialImage" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Width="128"
-                       Height="128" />
-                <StackPanel Name="InOutStackPanel" Grid.Row="2" Grid.Column="1" Orientation="Vertical">
-                    <RadioButton Name="InOutUnchanged" Content="Unchanged" GroupName="Indoor"
-                                 Checked="RadioButtonIndoor_Checked" IsChecked="True"></RadioButton>
-                    <RadioButton Name="InOutIndoor" Content="Indoor" GroupName="Indoor"
-                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
-                    <RadioButton Name="InOutOutdoor" Content="Outdoor" GroupName="Indoor"
-                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
-                </StackPanel>
-                <ListView Name="MaterialListView" Grid.Row="3" Grid.Column="1" SelectionMode="Single"
-                          SelectionChanged="MaterialListView_SelectionChanged" />
-            </Grid>
+        <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="2.5">
+            <TabControl x:Name="MainTabControl" IsEnabled="False">
+                <TabItem Header="Map Editor" IsSelected="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="128"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <Canvas x:Name="MapCanvas" Background="Black"
+                                    MouseLeftButtonDown="MapCanvas_LeftButtonMouseDown" MouseMove="MapCanvas_MouseMove" />
+                        </ScrollViewer>
+                        <Grid x:Name="MapOverlayGrid" Grid.Column="0" Background="Black" Opacity="0.75">
+                            <TextBlock x:Name="MapOverlayTextBlock" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" TextAlignment="Center" Foreground="White" FontSize="50">No prison loaded!</TextBlock>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" BorderBrush="Black" BorderThickness="0.5">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock x:Name="MaterialTextBlock" TextAlignment="Center" Background="Black"
+                                               Foreground="White" Padding="0 2.5 0 2.5">Unknown</TextBlock>
+                                    <Image x:Name="MaterialImage" HorizontalAlignment="Center" Width="128" Height="128" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0.5">
+                                <StackPanel x:Name="InOutStackPanel" Orientation="Vertical" Margin="5 5 0 5">
+                                    <RadioButton x:Name="InOutUnchanged" Content="Unchanged" GroupName="Indoor"
+                                                 Checked="RadioButtonIndoor_Checked" IsChecked="True"></RadioButton>
+                                    <RadioButton x:Name="InOutIndoor" Content="Indoor" GroupName="Indoor"
+                                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
+                                    <RadioButton x:Name="InOutOutdoor" Content="Outdoor" GroupName="Indoor"
+                                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
+                                </StackPanel>
+                            </Border>
+                            <ListView x:Name="MaterialListView" Grid.Row="2" SelectionMode="Single"
+                                      SelectionChanged="MaterialListView_SelectionChanged" />
+                        </Grid>
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="Finance" Header="Finance">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"></ColumnDefinition>
+                            <ColumnDefinition Width="150"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">Current Value</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center">New Value</TextBlock>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Balance:</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Balance, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="Balance" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Bank Credit Rating:</TextBlock>
+                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=BankCreditRating, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
+                        <TextBox Grid.Row="2" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="BankCreditRating" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Bank Loan:</TextBlock>
+                        <TextBlock Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=BankLoan, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
+                        <TextBox Grid.Row="3" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="BankLoan" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Exports Today:</TextBlock>
+                        <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ExportsToday, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
+                        <TextBox Grid.Row="4" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="ExportsToday" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Exports Yesterday:</TextBlock>
+                        <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ExportsYesterday, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
+                        <TextBox Grid.Row="5" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="ExportsYesterday" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center">Last Day:</TextBlock>
+                        <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=LastDay, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
+                        <TextBox Grid.Row="6" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="LastDay" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center">Last Hour:</TextBlock>
+                        <TextBlock Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=LastHour, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
+                        <TextBox Grid.Row="7" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="LastHour" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center">Ownership:</TextBlock>
+                        <TextBlock Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Ownership, Mode=OneWay, StringFormat='{}{0:#,0.####}%'}"></TextBlock>
+                        <TextBox Grid.Row="8" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="Ownership" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center">Sale Price:</TextBlock>
+                        <TextBlock Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=SalePrice, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
+                        <TextBox Grid.Row="9" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="SalePrice" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="Test" Header="Test">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"></ColumnDefinition>
+                            <ColumnDefinition Width="150"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">TestValue:</TextBlock>
+                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=TestValue}"></TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="TestValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">TestValue2:</TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=TestValue2}"></TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="TestValue2" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <DataErrorValidationRule />
+                                        <ExceptionValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+            </TabControl>
         </Border>
         <StatusBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <StatusBarItem>
-                <TextBlock Name="MemoryUsage" />
+                <TextBlock x:Name="MemoryUsage" />
             </StatusBarItem>
         </StatusBar>
     </Grid>
