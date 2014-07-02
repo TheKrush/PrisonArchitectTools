@@ -29,7 +29,7 @@
         </Menu>
         <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="2.5">
             <TabControl x:Name="MainTabControl" IsEnabled="False">
-                <TabItem Header="Map Editor" IsSelected="True">
+                <TabItem Header="Map" IsSelected="True">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
