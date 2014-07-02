@@ -12,8 +12,16 @@ namespace PrisonArchitect.Helper
             T val = default(T);
             try
             {
-                TypeConverter converter = TypeDescriptor.GetConverter(typeof (T));
-                val = (T) converter.ConvertFrom(source);
+                if (source == null)
+                {
+                }
+                else if (source.GetType() == typeof (T))
+                    val = (T) source;
+                else
+                {
+                    TypeConverter converter = TypeDescriptor.GetConverter(typeof (T));
+                    val = (T) converter.ConvertFrom(source);
+                }
             }
             catch (Exception)
             {
