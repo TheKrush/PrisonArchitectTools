@@ -5,12 +5,7 @@ namespace PrisonArchitect.Helper
 {
     public class MyConsole
     {
-#if DEBUG
-        public static bool UseConsole = true;
-#else
         public static bool UseConsole = false;
-#endif
-
         public static string Output = "";
         private static string _name = "";
 
@@ -49,10 +44,7 @@ namespace PrisonArchitect.Helper
             sw.Close();
         }
 
-        public static string ReadLine()
-        {
-            return UseConsole ? Console.ReadLine() : null;
-        }
+        public static string ReadLine() { return UseConsole ? Console.ReadLine() : null; }
 
         public static void Write(string line = "")
         {

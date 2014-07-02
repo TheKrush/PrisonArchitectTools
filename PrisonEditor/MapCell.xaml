@@ -1,8 +1,7 @@
 ﻿<UserControl x:Class="PrisonEditor.MapCell" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Drawing="clr-namespace:System.Drawing;assembly=System.Drawing" mc:Ignorable="d" IsHitTestVisible="True"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" IsHitTestVisible="True"
              MouseRightButtonDown="UserControl_MouseRightButtonDown" d:DesignHeight="32" d:DesignWidth="32"
              MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave">
     <Grid>

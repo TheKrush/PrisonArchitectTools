@@ -11,9 +11,7 @@ using System.Windows.Threading;
 using LostMinions.Functions;
 using Microsoft.Win32;
 using PrisonArchitect.PrisonFile;
-using PrisonArchitect.PrisonFile.Blocks;
-using Debug = System.Diagnostics.Debug;
-using Visibility = System.Windows.Visibility;
+using PrisonArchitect.PrisonFile.BlockWrappers;
 
 namespace PrisonEditor
 {
@@ -22,10 +20,9 @@ namespace PrisonEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int TileSize = 16;
         private readonly AssemblyInformation _assemblyInformation = new AssemblyInformation();
-        private readonly BackgroundWorker _loadPrisonFile;
         private PrisonFile _prisonFile;
+        private int _tileSize = 16;
 
         public MainWindow()
         {
@@ -34,120 +31,12 @@ namespace PrisonEditor
             Title = null;
 
             DispatcherTimer dispatcherTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 1)};
-            dispatcherTimer.Tick += MemoryUsageTimerTick;
+            dispatcherTimer.Tick += (sender, args) => { MemoryUsage.Text = "Memory: " + string.Format("{0:0.00} MB", GC.GetTotalMemory(true)/1024.0/1024.0); };
             dispatcherTimer.Start();
-            MemoryUsageTimerTick(null, null);
 
             MapCell.PreloadMaterialBitmaps();
             MaterialImage.Source = MapCell.MaterialBitmapImage["Dirt"];
             UpdateMaterialsListView();
-
-            _loadPrisonFile = new BackgroundWorker {WorkerReportsProgress = false, WorkerSupportsCancellation = false};
-            _loadPrisonFile.DoWork += (sender, args) =>
-                                          {
-                                              PrisonFile prisonFile = new PrisonFile(args.Argument as string);
-                                              args.Result = prisonFile;
-
-                                              GC.Collect();
-                                          };
-            _loadPrisonFile.RunWorkerCompleted += LoadPrisonFileOnRunWorkerCompleted;
-        }
-
-        private void MemoryUsageTimerTick(object sender, EventArgs eventArgs)
-        {
-            MemoryUsage.Text = "Memory: " + string.Format("{0:0.00} MB", GC.GetTotalMemory(true)/1024.0/1024.0);
-        }
-
-        private void LoadPrisonFileOnRunWorkerCompleted(object sender,
-                                                        RunWorkerCompletedEventArgs runWorkerCompletedEventArgs)
-        {
-            _prisonFile = runWorkerCompletedEventArgs.Result as PrisonFile;
-
-            Debug.Assert(_prisonFile != null, "_prisonFile != null");
-
-            MapCell.UnknownMaterials =
-                _prisonFile.Cells.Blocks.Cast<Cells.Cell>().Select(cell => cell.Material).Distinct().Where(
-                    material => !string.IsNullOrEmpty(material) && !Cells.Cell.Materials.Contains(material)).ToList();
-
-            MapCell.PreloadMaterialBitmaps();
-            UpdateMaterialsListView();
-            UpdateMapCanvas();
-
-            MapOverlayGrid.Visibility = Visibility.Collapsed;
-            MapGrid.IsEnabled = IsEnabled = true;
-        }
-
-        private void UpdateMaterialsListView()
-        {
-            MaterialListView.Items.Clear();
-            List<string> allMaterials =
-                new List<string>(Cells.Cell.Materials).Concat(MapCell.UnknownMaterials).OrderBy(material => material).
-                    Distinct().ToList();
-            foreach (string material in allMaterials)
-            {
-                ListViewItem listViewItem = new ListViewItem { Name = material, Content = material };
-                MaterialListView.Items.Add(listViewItem);
-                if (material == "Dirt") MaterialListView.SelectedItem = listViewItem;
-            }
-        }
-
-        private void UpdateMapCanvas()
-        {
-            MapCanvas.Width = _prisonFile.NumCellsX*TileSize;
-            MapCanvas.Height = _prisonFile.NumCellsY*TileSize;
-
-            MapCanvas.Children.Clear();
-            foreach (Cells.Cell cell in _prisonFile.Cells.Blocks.Cast<Cells.Cell>())
-                MapCanvas.Children.Add(new MapCell(cell) {Width = TileSize, Height = TileSize, Material = cell.Material});
-        }
-
-        private void MapCanvas_LeftButtonMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // Retrieve the coordinate of the mouse position.
-            Point pt = e.GetPosition((UIElement) sender);
-
-            // Perform the hit test against a given portion of the visual object tree.
-            HitTestResult result = VisualTreeHelper.HitTest((UIElement) sender, pt);
-            HandleHitTestResult(result);
-        }
-
-        private void MaterialListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ListView listView = (ListView) sender;
-
-            if (listView.SelectedItem == null)
-                MaterialImage.Source = null;
-            else
-            {
-                string material = (string) ((ListViewItem) listView.SelectedItem).Content;
-                MaterialImage.Source = MapCell.MaterialBitmapImage.ContainsKey(material)
-                                           ? MapCell.MaterialBitmapImage[material]
-                                           : MapCell.MaterialBitmapImage["Unknown"];
-            }
-        }
-
-        private void MapCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            // Retrieve the coordinate of the mouse position.
-            Point pt = e.GetPosition((UIElement) sender);
-
-            // Perform the hit test against a given portion of the visual object tree.
-            HitTestResult result = VisualTreeHelper.HitTest((UIElement) sender, pt);
-
-            if (e.LeftButton == MouseButtonState.Pressed)
-                HandleHitTestResult(result);
-        }
-
-        private void HandleHitTestResult(HitTestResult hitTestResult)
-        {
-            if (hitTestResult == null) return;
-
-            DependencyObject element = hitTestResult.VisualHit;
-            while (element != null && !(element is MapCell))
-                element = VisualTreeHelper.GetParent(element);
-
-            if (element != null)
-                ((MapCell) element).Material = (string) ((ListViewItem) MaterialListView.SelectedItem).Content;
         }
 
         public new string Title
@@ -160,6 +49,26 @@ namespace PrisonEditor
             }
         }
 
+        #region Events
+
+        #region Canvas
+
+        private void MapCanvas_LeftButtonMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            HitTestResult result = VisualTreeHelper.HitTest((UIElement) sender, e.GetPosition((UIElement) sender));
+            HandleHitTestResult(result);
+        }
+
+        private void MapCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            HitTestResult result = VisualTreeHelper.HitTest((UIElement) sender, e.GetPosition((UIElement) sender));
+            if (e.LeftButton == MouseButtonState.Pressed) HandleHitTestResult(result);
+        }
+
+        #endregion Canvas
+
+        #region Menu
+
         private void MenuItemFileOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -167,58 +76,246 @@ namespace PrisonEditor
                                                     FileName = "default",
                                                     DefaultExt = ".prison",
                                                     Filter = "Prison documents (.prison)|*.prison",
-                                                    InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Introversion\Prison Architect\saves\")
+                                                    InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                                                    @"Introversion\Prison Architect\saves\")
                                                 };
 
             // Show open file dialog box 
             bool? result = openFileDialog.ShowDialog();
 
             // Process open file dialog box results 
-            if (result == true)
-            {
-                // Open document 
-                string filename = openFileDialog.FileName;
-
-                Title = Path.GetFileName(filename);
-
-                IsEnabled = false;
-                MapOverlayGrid.Visibility = Visibility.Visible;
-                MapOverlayTextBlock.Text = "Loading" + Environment.NewLine + Path.GetFileName(filename);
-                _loadPrisonFile.RunWorkerAsync(filename);
-            }
+            if (result == true) LoadFile(openFileDialog.FileName);
         }
 
-        private void MenuItemFileExit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void MenuItemFileSave_Click(object sender, RoutedEventArgs e)
-        {
-            File.WriteAllText(_prisonFile.FileName, _prisonFile.Output);
-        }
+        private void MenuItemFileSave_Click(object sender, RoutedEventArgs e) { SaveFile(_prisonFile.FileName); }
 
         private void MenuItemFileSaveAs_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                FileName = Path.GetFileNameWithoutExtension(_prisonFile.FileName),
-                DefaultExt = ".prison",
-                Filter = "Prison documents (.prison)|*.prison",
-                InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Introversion\Prison Architect\saves\")
-            };
+                                                {
+                                                    FileName = Path.GetFileNameWithoutExtension(_prisonFile.FileName),
+                                                    DefaultExt = ".prison",
+                                                    Filter = "Prison documents (.prison)|*.prison",
+                                                    InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                                                    @"Introversion\Prison Architect\saves\")
+                                                };
 
             // Show open file dialog box 
             bool? result = saveFileDialog.ShowDialog();
 
             // Process open file dialog box results 
-            if (result == true)
-            {
-                // Open document 
-                string filename = saveFileDialog.FileName;
+            if (result == true) SaveFile(saveFileDialog.FileName);
+        }
 
-                File.WriteAllText(filename, _prisonFile.Output);
+        private void MenuItemFileExit_Click(object sender, RoutedEventArgs e) { Close(); }
+
+        private void MenuItemMapTileSize_Checked(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            if (menuItem == null) return;
+
+            int tileSize = _tileSize;
+            switch (menuItem.Header.ToString())
+            {
+                case "16x16":
+                    _tileSize = 16;
+                    break;
+                case "32x32":
+                    _tileSize = 32;
+                    break;
+                case "64x64":
+                    _tileSize = 64;
+                    break;
             }
+
+            if (tileSize == _tileSize) return;
+
+            IsEnabled = false;
+            MapOverlayGrid.Visibility = Visibility.Visible;
+            MapOverlayTextBlock.Text = "Changing tile size to " + menuItem.Header;
+
+            UpdateMapCanvas();
+
+            MapOverlayGrid.Visibility = Visibility.Collapsed;
+            IsEnabled = true;
+        }
+
+        #endregion Menu
+
+        private EInOut _inOut = EInOut.Unchanged;
+
+        private void MaterialListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView listView = (ListView) sender;
+
+            string material = null;
+            if (listView.SelectedItem == null)
+            {
+                MaterialTextBlock.Text = null;
+                MaterialImage.Source = null;
+            }
+            else
+            {
+                material = (string) ((ListViewItem) listView.SelectedItem).Content;
+                MaterialTextBlock.Text = material;
+                MaterialImage.Source = MapCell.MaterialBitmapImage.ContainsKey(material) ? MapCell.MaterialBitmapImage[material] : MapCell.MaterialBitmapImage["Unknown"];
+            }
+
+            if (Cell.IsAlwaysIndoor(material))
+            {
+                InOutStackPanel.IsEnabled = false;
+                InOutIndoor.IsChecked = true;
+            }
+            else if (Cell.IsAlwaysOutdoor(material))
+            {
+                InOutStackPanel.IsEnabled = false;
+                InOutOutdoor.IsChecked = true;
+            }
+            else
+            {
+                InOutStackPanel.IsEnabled = true;
+                InOutUnchanged.IsChecked = true;
+            }
+        }
+
+        private void RadioButtonIndoor_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            if (radioButton == null) return;
+
+            _inOut = (EInOut) Enum.Parse(typeof (EInOut), (string) radioButton.Content);
+        }
+
+        private enum EInOut
+        {
+            // ReSharper disable InconsistentNaming
+            Unchanged,
+            Indoor,
+            Outdoor,
+            // ReSharper restore InconsistentNaming
+        }
+
+        #endregion Events
+
+        private void UpdateMaterialsListView()
+        {
+            MaterialListView.Items.Clear();
+            List<string> allMaterials = new List<string>(Cell.Materials).Concat(MapCell.UnknownMaterials).OrderBy(material => material).Distinct().ToList();
+            foreach (string material in allMaterials)
+            {
+                ListViewItem listViewItem = new ListViewItem {Name = material, Content = material};
+                MaterialListView.Items.Add(listViewItem);
+                if (material == "Dirt") MaterialListView.SelectedItem = listViewItem;
+            }
+        }
+
+        private void UpdateMapCanvas()
+        {
+            MapCanvas.Width = _prisonFile.NumCellsX*_tileSize;
+            MapCanvas.Height = _prisonFile.NumCellsY*_tileSize;
+
+            MapCanvas.Children.Clear();
+            foreach (Cell cell in _prisonFile.Cells)
+                MapCanvas.Children.Add(new MapCell(cell) {Width = _tileSize, Height = _tileSize, Material = cell.Material});
+        }
+
+        private void HandleHitTestResult(HitTestResult hitTestResult)
+        {
+            if (hitTestResult == null) return;
+
+            DependencyObject element = hitTestResult.VisualHit;
+            while (element != null && !(element is MapCell))
+                element = VisualTreeHelper.GetParent(element);
+
+            if (element == null) return;
+
+            MapCell mapCell = (MapCell) element;
+            switch (_inOut)
+            {
+                case EInOut.Unchanged:
+                    break;
+                case EInOut.Indoor:
+                    mapCell.Cell.Indoors = true;
+                    break;
+                case EInOut.Outdoor:
+                    mapCell.Cell.Indoors = false;
+                    break;
+            }
+            mapCell.Material = (string) ((ListViewItem) MaterialListView.SelectedItem).Content;
+        }
+
+        private void LoadFile(string filename)
+        {
+            Title = Path.GetFileName(filename);
+
+            IsEnabled = false;
+            MapOverlayGrid.Visibility = Visibility.Visible;
+            MapOverlayTextBlock.Text = "Loading" + Environment.NewLine + Path.GetFileName(filename);
+
+            #region BackgroundWorker
+
+            BackgroundWorker backgroundWorker = new BackgroundWorker
+                                                    {
+                                                        WorkerReportsProgress = false,
+                                                        WorkerSupportsCancellation = false
+                                                    };
+            backgroundWorker.DoWork += (o, args) =>
+                                           {
+                                               PrisonFile prisonFile = new PrisonFile(args.Argument as string);
+                                               args.Result = prisonFile;
+
+                                               GC.Collect();
+                                           };
+            backgroundWorker.RunWorkerCompleted += (o, args) =>
+                                                       {
+                                                           _prisonFile = (PrisonFile) args.Result;
+
+                                                           MapCell.UnknownMaterials =
+                                                               _prisonFile.Cells.Select(cell => cell.Material).Distinct()
+                                                                   .Where(material => !string.IsNullOrEmpty(material) && !Cell.Materials.Contains(material)).ToList();
+
+                                                           MapCell.PreloadMaterialBitmaps();
+                                                           UpdateMaterialsListView();
+                                                           UpdateMapCanvas();
+
+                                                           MapOverlayGrid.Visibility = Visibility.Collapsed;
+                                                           IsEnabled = SaveMenu.IsEnabled = SaveAsMenu.IsEnabled = MapMenu.IsEnabled = MapGrid.IsEnabled = true;
+                                                       };
+            backgroundWorker.RunWorkerAsync(filename);
+
+            #endregion BackgroundWorker
+        }
+
+        private void SaveFile(string filename)
+        {
+            Title = Path.GetFileName(filename);
+
+            IsEnabled = false;
+            MapOverlayGrid.Visibility = Visibility.Visible;
+            MapOverlayTextBlock.Text = "Saving" + Environment.NewLine + Path.GetFileName(filename);
+
+            #region BackgroundWorker
+
+            BackgroundWorker backgroundWorker = new BackgroundWorker
+                                                    {
+                                                        WorkerReportsProgress = false,
+                                                        WorkerSupportsCancellation = false
+                                                    };
+            backgroundWorker.DoWork += (o, args) =>
+                                           {
+                                               File.WriteAllText((string) args.Argument, _prisonFile.Output);
+                                               _prisonFile.FileName = (string) args.Argument;
+
+                                               GC.Collect();
+                                           };
+            backgroundWorker.RunWorkerCompleted += (o, args) =>
+                                                       {
+                                                           MapOverlayGrid.Visibility = Visibility.Collapsed;
+                                                           IsEnabled = SaveMenu.IsEnabled = SaveAsMenu.IsEnabled = MapMenu.IsEnabled = MapGrid.IsEnabled = true;
+                                                       };
+            backgroundWorker.RunWorkerAsync(filename);
+
+            #endregion BackgroundWorker
         }
     }
 }
