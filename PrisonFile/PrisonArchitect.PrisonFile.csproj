@@ -106,6 +106,8 @@
     <Compile Include="BlockWrappers\BlockWrapper.cs" />
     <Compile Include="BlockWrappers\Cell.cs" />
     <Compile Include="BlockWrappers\Finance.cs" />
+    <Compile Include="BlockWrappers\Helper\Bio.cs" />
+    <Compile Include="BlockWrappers\Helper\Intake.cs" />
     <Compile Include="BlockWrappers\ObjectBase.cs" />
     <Compile Include="BlockWrappers\Objects\Bed.cs" />
     <Compile Include="BlockWrappers\Objects\Capacitor.cs" />

@@ -7,7 +7,7 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers
 {
     public class BlockWrapper
     {
-        public readonly Block Block;
+        public Block Block;
 
         public BlockWrapper(Block block) { Block = block; }
 

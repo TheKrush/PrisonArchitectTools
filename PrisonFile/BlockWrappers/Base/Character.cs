@@ -31,9 +31,10 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Base
         #endregion
 
         // gang.id
-        public Character(Block block)
-            : base(block)
+        public Character(Block block) : base(block)
         {
+            Bio = new Bio(block, "Bio");
+
             AssignedRoom = new Id(block, "AssignedRoom");
             Carrying = new Id(block, "Carrying");
             Office = new Id(block, "Office");
@@ -74,11 +75,14 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Base
 
         public static IEnumerable<string> CharacterTypes { get { return Enum.GetNames(typeof (ECharacterType)); } }
 
+        public Bio Bio { get; set; }
+
         public Id AssignedRoom { get; set; }
         public Id Carrying { get; set; }
         public Id Office { get; set; }
         public Id Station { get; set; }
         public Id TargetObject { get; set; }
+
         public Vector2D<float> Vel { get; set; }
         public Vector2D<float> Dest { get; set; }
 

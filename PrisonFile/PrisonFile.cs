@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.BlockWrappers;
+using PrisonArchitect.PrisonFile.BlockWrappers.Base;
+using PrisonArchitect.PrisonFile.BlockWrappers.Helper;
 
 namespace PrisonArchitect.PrisonFile
 {
-    public class PrisonFile
+    public class PrisonFile : BlockWrapper
     {
         public const string GameVersion = "alpha-22";
 
@@ -15,59 +17,61 @@ namespace PrisonArchitect.PrisonFile
 
         // ReSharper disable InconsistentNaming
 
-        private readonly Block _block;
+        public int BioVersions { get { return Variables["BioVersions"].SafeParse<int>(); } set { Variables["BioVersions"] = value; } }
 
-        public string Version { get { return _block.Variables["Version"].SafeParse<string>(); } set { _block.Variables["Version"] = value; } }
+        public bool CeoLetterRead { get { return Variables["CeoLetterRead"].SafeParse<bool>(); } set { Variables["CeoLetterRead"] = value; } }
 
-        public int NumCellsX { get { return _block.Variables["NumCellsX"].SafeParse<int>(); } set { _block.Variables["Version"] = value; } }
+        public bool EnabledDecay { get { return Variables["EnabledDecay"].SafeParse<bool>(); } set { Variables["EnabledDecay"] = value; } }
 
-        public int NumCellsY { get { return _block.Variables["NumCellsY"].SafeParse<int>(); } set { _block.Variables["NumCellsY"] = value; } }
+        public bool EnabledElectricity { get { return Variables["EnabledElectricity"].SafeParse<bool>(); } set { Variables["EnabledElectricity"] = value; } }
 
-        public int OriginX { get { return _block.Variables["OriginX"].SafeParse<int>(); } set { _block.Variables["OriginX"] = value; } }
+        public bool EnabledFood { get { return Variables["EnabledFood"].SafeParse<bool>(); } set { Variables["EnabledFood"] = value; } }
 
-        public int OriginY { get { return _block.Variables["OriginY"].SafeParse<int>(); } set { _block.Variables["OriginY"] = value; } }
+        public bool EnabledMisconduct { get { return Variables["EnabledMisconduct"].SafeParse<bool>(); } set { Variables["EnabledMisconduct"] = value; } }
 
-        public int OriginW { get { return _block.Variables["OriginW"].SafeParse<int>(); } set { _block.Variables["OriginW"] = value; } }
+        public bool EnabledVisibility { get { return Variables["EnabledVisibility"].SafeParse<bool>(); } set { Variables["EnabledVisibility"] = value; } }
 
-        public int OriginH { get { return _block.Variables["OriginH"].SafeParse<int>(); } set { _block.Variables["OriginH"] = value; } }
+        public bool EnabledWater { get { return Variables["EnabledWater"].SafeParse<bool>(); } set { Variables["EnabledWater"] = value; } }
 
-        public float TimeIndex { get { return _block.Variables["TimeIndex"].SafeParse<float>(); } set { _block.Variables["TimeIndex"] = value; } }
+        public bool FailureConditions { get { return Variables["FailureConditions"].SafeParse<bool>(); } set { Variables["FailureConditions"] = value; } }
 
-        public int RandomSeed { get { return _block.Variables["RandomSeed"].SafeParse<int>(); } set { _block.Variables["RandomSeed"] = value; } }
+        public int FoodQuantity { get { return Variables["FoodQuantity"].SafeParse<int>(); } set { Variables["FoodQuantity"] = value; } }
 
-        public int SecondsPlayed { get { return _block.Variables["SecondsPlayed"].SafeParse<int>(); } set { _block.Variables["SecondsPlayed"] = value; } }
+        public int FoodVariation { get { return Variables["FoodVariation"].SafeParse<int>(); } set { Variables["FoodVariation"] = value; } }
 
-        public int ObjectId_next { get { return _block.Variables["ObjectId.next"].SafeParse<int>(); } set { _block.Variables["ObjectId.next"] = value; } }
+        public bool GenerateForests { get { return Variables["GenerateForests"].SafeParse<bool>(); } set { Variables["GenerateForests"] = value; } }
 
-        public bool EnabledElectricity { get { return _block.Variables["EnabledElectricity"].SafeParse<bool>(); } set { _block.Variables["EnabledElectricity"] = value; } }
+        public int NumCellsX { get { return Variables["NumCellsX"].SafeParse<int>(); } set { Variables["NumCellsX"] = value; } }
 
-        public bool EnabledWater { get { return _block.Variables["EnabledWater"].SafeParse<bool>(); } set { _block.Variables["EnabledWater"] = value; } }
+        public int NumCellsY { get { return Variables["NumCellsY"].SafeParse<int>(); } set { Variables["NumCellsY"] = value; } }
 
-        public bool EnabledFood { get { return _block.Variables["EnabledFood"].SafeParse<bool>(); } set { _block.Variables["EnabledFood"] = value; } }
+        public bool ObjectsCentreAligned { get { return Variables["ObjectsCentreAligned"].SafeParse<bool>(); } set { Variables["ObjectsCentreAligned"] = value; } }
 
-        public bool EnabledMisconduct { get { return _block.Variables["EnabledMisconduct"].SafeParse<bool>(); } set { _block.Variables["EnabledMisconduct"] = value; } }
+        public int OriginH { get { return Variables["OriginH"].SafeParse<int>(); } set { Variables["OriginH"] = value; } }
 
-        public bool EnabledDecay { get { return _block.Variables["EnabledDecay"].SafeParse<bool>(); } set { _block.Variables["EnabledDecay"] = value; } }
+        public int OriginW { get { return Variables["OriginW"].SafeParse<int>(); } set { Variables["OriginW"] = value; } }
 
-        public bool EnabledVisibility { get { return _block.Variables["EnabledVisibility"].SafeParse<bool>(); } set { _block.Variables["EnabledVisibility"] = value; } }
+        public int OriginX { get { return Variables["OriginX"].SafeParse<int>(); } set { Variables["OriginX"] = value; } }
 
-        public bool ObjectsCentreAligned { get { return _block.Variables["ObjectsCentreAligned"].SafeParse<bool>(); } set { _block.Variables["ObjectsCentreAligned"] = value; } }
+        public int OriginY { get { return Variables["OriginY"].SafeParse<int>(); } set { Variables["OriginY"] = value; } }
 
-        public int BioVersions { get { return _block.Variables["BioVersions"].SafeParse<int>(); } set { _block.Variables["BioVersions"] = value; } }
+        public int RandomSeed { get { return Variables["RandomSeed"].SafeParse<int>(); } set { Variables["RandomSeed"] = value; } }
 
-        public float Intake_next { get { return _block.Variables["Intake.next"].SafeParse<float>(); } set { _block.Variables["Intake.next"] = value; } }
+        public int SecondsPlayed { get { return Variables["SecondsPlayed"].SafeParse<int>(); } set { Variables["SecondsPlayed"] = value; } }
 
-        public int Intake_numPrisoners { get { return _block.Variables["Intake.numPrisoners"].SafeParse<int>(); } set { _block.Variables["Intake.numPrisoners"] = value; } }
+        public float TimeIndex { get { return Variables["TimeIndex"].SafeParse<float>(); } set { Variables["TimeIndex"] = value; } }
 
-        public bool Intake_reqMin { get { return _block.Variables["Intake.reqMin"].SafeParse<bool>(); } set { _block.Variables["Intake.reqMin"] = value; } }
+        public float TimeWarpFactor { get { return Variables["TimeWarpFactor"].SafeParse<float>(); } set { Variables["TimeWarpFactor"] = value; } }
 
-        public bool Intake_reqNormal { get { return _block.Variables["Intake.reqNormal"].SafeParse<bool>(); } set { _block.Variables["Intake.reqNormal"] = value; } }
+        public string Version { get { return Variables["Version"].SafeParse<string>(); } set { Variables["Version"] = value; } }
 
-        public bool Intake_reqMax { get { return _block.Variables["Intake.reqMax"].SafeParse<bool>(); } set { _block.Variables["Intake.reqMax"] = value; } }
+        public IEnumerable<Cell> Cells { get { return Blocks.First(block => block.BlockName == "Cells").Blocks.Select(block => new Cell(block)); } }
 
-        public IEnumerable<Cell> Cells { get { return _block.Blocks.First(block => block.BlockName == "Cells").Blocks.Select(block => new Cell(block)); } }
+        public Finance Finance { get { return new Finance(Blocks.First(block => block.BlockName == "Finance")); } }
 
-        public Finance Finance { get { return new Finance(_block.Blocks.First(block => block.BlockName == "Finance")); } }
+        public Intake Intake { get; set; }
+
+        public Id ObjectId { get; set; }
 
         public IEnumerable<ObjectBase> Objects
         {
@@ -75,7 +79,7 @@ namespace PrisonArchitect.PrisonFile
             {
                 List<ObjectBase> output = new List<ObjectBase>();
 
-                foreach (ObjectBase o in _block.Blocks.First(block => block.BlockName == "Objects").Blocks.Select(b => new ObjectBase(b)))
+                foreach (ObjectBase o in Blocks.First(block => block.BlockName == "Objects").Blocks.Select(b => new ObjectBase(b)))
                 {
                     ObjectBase o2 = null;
 
@@ -96,7 +100,7 @@ namespace PrisonArchitect.PrisonFile
 
         private readonly PrisonFileParser _prisonFileParser = new PrisonFileParser();
 
-        public PrisonFile(string filename)
+        public PrisonFile(string filename) : base(null)
         {
             FileName = filename;
 
@@ -104,34 +108,69 @@ namespace PrisonArchitect.PrisonFile
             MyConsole.WriteLine(filename);
             MyConsole.WriteLine(new string('-', filename.Length));
 
+            #region Parse
+
             // Read the file and display it line by line.
             StreamReader file = new StreamReader(filename);
 
-            _prisonFileParser.Parse(file.ReadToEnd(), out _block);
+            _prisonFileParser.Parse(file.ReadToEnd(), out Block);
 
             file.Close();
 
+            #endregion Parse
+
             if (GameVersion != Version) MyConsole.WriteLine("Code was created for version " + GameVersion + " not " + Version + " problems may occur");
 
+            Intake = new Intake(Block, "Intake");
+            ObjectId = new Id(Block, "ObjectId");
+
 #if DEBUG
-            foreach(Block block in _block.Blocks.OrderBy(block => block.BlockName))
+            Dictionary<string, object> unhandled = new Dictionary<string, object>();
+
+            foreach (Block block in Blocks.OrderBy(block => block.BlockName))
                 MyConsole.WriteLine(block.BlockName);
+
             MyConsole.WriteLine(new string('-', filename.Length));
 
-            // this fun little piece of code lets me see any variables I haven't wrapped yet
-            List<ObjectBase> test = Objects.OrderBy(o => o.Type).ToList();
-            foreach (string t in test.Select(o => o.Type).Distinct().OrderBy(type => type))
             {
-                string type = t;
-                Type objectType = GetCustomType(type);
-
-                Dictionary<string, object> unhandled = new Dictionary<string, object>();
-                foreach (KeyValuePair<string, object> keyValuePair in test.Where(o => o.Type == type).SelectMany(objectBase => objectBase.GetUnhandledVariables()))
+                MyConsole.WriteLine("Debugging - PrisonFile");
+                unhandled = new Dictionary<string, object>();
+                foreach (KeyValuePair<string, object> keyValuePair in GetUnhandledVariables())
                     unhandled[keyValuePair.Key] = keyValuePair.Value;
-                MyConsole.WriteLine((type + " ").PadRight(20, '-') + " " + (objectType ?? typeof (ObjectBase)));
+                MyConsole.WriteLine("PrisonFile ".PadRight(20, '-') + " " + GetType().FullName);
                 foreach (string k in unhandled.Keys.OrderBy(key => key))
                     MyConsole.WriteLine(new string(' ', 2) + k + " : " + unhandled[k]);
             }
+
+            #region Objects
+
+            { // this fun little piece of code lets me see any object variables I haven't wrapped yet
+                MyConsole.WriteLine("Debugging - Objects");
+                MyConsole.WriteLine(new string('-', filename.Length));
+                List<ObjectBase> test = Objects.OrderBy(o => o.Type).ToList();
+                foreach (string t in test.Select(o => o.Type).Distinct().OrderBy(type => type))
+                {
+                    string type = t;
+                    Type objectType = GetCustomType(type);
+
+                    unhandled = new Dictionary<string, object>();
+                    foreach (KeyValuePair<string, object> keyValuePair in test.Where(o => o.Type == type).SelectMany(objectBase => objectBase.GetUnhandledVariables()))
+                        unhandled[keyValuePair.Key] = keyValuePair.Value;
+                    MyConsole.WriteLine((type + " ").PadRight(20, '-') + " " + (objectType ?? typeof (ObjectBase)));
+                    foreach (string k in unhandled.Keys.OrderBy(key => key))
+                        MyConsole.WriteLine(new string(' ', 2) + k + " : " + unhandled[k]);
+                }
+
+                // Character.Bio check
+                unhandled = new Dictionary<string, object>();
+                foreach (KeyValuePair<string, object> keyValuePair in Objects.Where(o => o.GetType() == typeof(Character)).Cast<Character>().SelectMany(character => character.Bio.GetUnhandledVariables()))
+                    unhandled[keyValuePair.Key] = keyValuePair.Value;
+                MyConsole.WriteLine("Bio ".PadRight(20, '-') + " " + typeof(Bio).FullName);
+                foreach (string k in unhandled.Keys.OrderBy(key => key))
+                    MyConsole.WriteLine(new string(' ', 2) + k + " : " + unhandled[k]);
+            }
+
+            #endregion Objects
 
             MyConsole.WriteLogFile();
 #endif
@@ -139,46 +178,12 @@ namespace PrisonArchitect.PrisonFile
 
         public string FileName { get; set; }
 
-        public string Output { get { return _block.Output; } }
+        public string Output { get { return Block.Output; } }
 
         private Type GetCustomType(string typeName)
         {
             const string className = "PrisonArchitect.PrisonFile.BlockWrappers.Objects.";
             return Type.GetType(className + typeName) ?? Type.GetType(className + "Characters." + typeName);
-        }
-
-        public void DebugBlocks()
-        {
-            DebugBlock(_block);
-            DebugBlockVariables(_block);
-#if DEBUG
-            MyConsole.WriteLogFile();
-#endif
-        }
-
-        private void DebugBlock(Block block)
-        {
-            if (block.GetType() == typeof (Block) && !string.IsNullOrEmpty(block.BlockName))
-            {
-                string fullName = block.BlockName;
-                Block tempBlock = block.Parent;
-                while (tempBlock != null)
-                {
-                    fullName = tempBlock.BlockName + " -> " + fullName;
-                    tempBlock = tempBlock.Parent;
-                }
-                MyConsole.WriteLine("Unhandled Block: " + fullName);
-            }
-
-            foreach (Block b in block.Blocks)
-                DebugBlock(b);
-        }
-
-        private void DebugBlockVariables(Block block)
-        {
-            MyConsole.Write(block.ToString());
-            foreach (Block b in block.Blocks)
-                DebugBlockVariables(b);
         }
     }
 }
