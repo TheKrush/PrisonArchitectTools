@@ -71,6 +71,8 @@ namespace PrisonEditor
 
         public int Y { get { return _cell.Y; } }
 
+        public bool Indoors { get { return _cell.Indoors; } set { _cell.Indoors = value; } }
+
         public new double Width
         {
             get { return base.Width; }
@@ -114,24 +116,24 @@ namespace PrisonEditor
             ContextMenu contextMenu = new ContextMenu();
 
             foreach (MenuItem menuItem in Cell.Materials.Select(material => new MenuItem
-                                                                                {
-                                                                                    Name = material,
-                                                                                    Header = material,
-                                                                                    IsCheckable = true,
-                                                                                    IsChecked = material == Material
-                                                                                }))
+                                                                            {
+                                                                                Name = material,
+                                                                                Header = material,
+                                                                                IsCheckable = true,
+                                                                                IsChecked = material == Material
+                                                                            }))
             {
                 menuItem.Click += (sender1, args) => { Material = ((MenuItem) sender).Header as string; };
                 contextMenu.Items.Add(menuItem);
             }
             contextMenu.Items.Add(new Separator());
             foreach (MenuItem menuItem in UnknownMaterials.Select(material => new MenuItem
-                                                                                  {
-                                                                                      Name = material,
-                                                                                      Header = material,
-                                                                                      IsCheckable = true,
-                                                                                      IsChecked = material == Material
-                                                                                  }))
+                                                                              {
+                                                                                  Name = material,
+                                                                                  Header = material,
+                                                                                  IsCheckable = true,
+                                                                                  IsChecked = material == Material
+                                                                              }))
             {
                 menuItem.Click += (sender1, args) => { Material = ((MenuItem) sender).Header as string; };
                 contextMenu.Items.Add(menuItem);
@@ -148,5 +150,15 @@ namespace PrisonEditor
         private void UserControl_MouseLeave(object sender, MouseEventArgs e) { Selected = false; }
 
         #endregion Events
+
+        #region Nested type: Vector2D
+
+        private struct Vector2D
+        {
+            public int X;
+            public int Y;
+        }
+
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using PrisonArchitect.Helper;
-using PrisonArchitect.PrisonFile.BlockWrappers.Helper;
+﻿using PrisonArchitect.PrisonFile.BlockWrappers.Helper;
 
 namespace PrisonArchitect.PrisonFile.BlockWrappers.Objects
 {

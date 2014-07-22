@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.BlockWrappers.Helper;
@@ -33,7 +34,7 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Base
         // gang.id
         public Character(Block block) : base(block)
         {
-            Bio = new Bio(block, "Bio");
+            Bio = new Bio(Blocks.FirstOrDefault(b => b.BlockName == "Bio") ?? new Block() {BlockName = "Bio"}, "Bio");
 
             AssignedRoom = new Id(block, "AssignedRoom");
             Carrying = new Id(block, "Carrying");

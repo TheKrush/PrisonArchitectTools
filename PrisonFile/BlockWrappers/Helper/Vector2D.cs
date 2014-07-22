@@ -10,9 +10,9 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Helper
 
         // ReSharper disable InconsistentNaming
 
-        public T x { get { return Variables[Name + ".x"].SafeParse<T>(); } set { Variables[Name + ".x"] = value; } }
+        public T x { get { return Variables[Name + ".x"].SafeParse<T>(); } set { Variables[Name + ".x"] = value.ToString(); } }
 
-        public T y { get { return Variables[Name + ".y"].SafeParse<T>(); } set { Variables[Name + ".y"] = value; } }
+        public T y { get { return Variables[Name + ".y"].SafeParse<T>(); } set { Variables[Name + ".y"] = value.ToString(); } }
 
         // ReSharper restore InconsistentNaming
 

@@ -6,6 +6,7 @@ using PrisonArchitect.Helper;
 using PrisonArchitect.PrisonFile.BlockWrappers;
 using PrisonArchitect.PrisonFile.BlockWrappers.Base;
 using PrisonArchitect.PrisonFile.BlockWrappers.Helper;
+using PrisonArchitect.PrisonFile.BlockWrappers.Objects;
 
 namespace PrisonArchitect.PrisonFile
 {
@@ -163,9 +164,10 @@ namespace PrisonArchitect.PrisonFile
 
                 // Character.Bio check
                 unhandled = new Dictionary<string, object>();
-                foreach (KeyValuePair<string, object> keyValuePair in Objects.Where(o => o.GetType() == typeof(Character)).Cast<Character>().SelectMany(character => character.Bio.GetUnhandledVariables()))
+                foreach (
+                    KeyValuePair<string, object> keyValuePair in Objects.Where(o => o.GetType() == typeof (Character)).Cast<Character>().SelectMany(character => character.Bio.GetUnhandledVariables()))
                     unhandled[keyValuePair.Key] = keyValuePair.Value;
-                MyConsole.WriteLine("Bio ".PadRight(20, '-') + " " + typeof(Bio).FullName);
+                MyConsole.WriteLine("Bio ".PadRight(20, '-') + " " + typeof (Bio).FullName);
                 foreach (string k in unhandled.Keys.OrderBy(key => key))
                     MyConsole.WriteLine(new string(' ', 2) + k + " : " + unhandled[k]);
             }
@@ -185,5 +187,8 @@ namespace PrisonArchitect.PrisonFile
             const string className = "PrisonArchitect.PrisonFile.BlockWrappers.Objects.";
             return Type.GetType(className + typeName) ?? Type.GetType(className + "Characters." + typeName);
         }
+
+        public IEnumerable<Character> Characters { get { return Objects.OfType<Character>(); } }
+        public IEnumerable<Prisoner> Prisoners { get { return Objects.OfType<Prisoner>(); } } 
     }
 }

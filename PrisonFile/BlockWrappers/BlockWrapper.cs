@@ -11,9 +11,9 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers
 
         public BlockWrapper(Block block) { Block = block; }
 
-        protected SafeDictionary<string, object> Variables { get { return Block.Variables; } }
+        public SafeDictionary<string, object> Variables { get { return Block.Variables; } }
 
-        protected List<Block> Blocks { get { return Block.Blocks; } }
+        public List<Block> Blocks { get { return Block.Blocks; } }
 
         public Dictionary<string, object> GetUnhandledVariables()
         {
@@ -35,6 +35,9 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers
             return output;
         }
 
-        public override string ToString() { return Block.ToString(); }
+        public override string ToString()
+        {
+            return Block == null ? "" : Block.ToString();
+        }
     }
 }

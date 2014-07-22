@@ -102,6 +102,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Helper\PrisonArchitect.Helper.csproj">
+      <Project>{57837A44-7027-4B2B-B743-4887C19866AA}</Project>
+      <Name>PrisonArchitect.Helper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PrisonFile\PrisonArchitect.PrisonFile.csproj">
       <Project>{55A6347D-41D2-450F-B08C-F12D0C8B3FC5}</Project>
       <Name>PrisonArchitect.PrisonFile</Name>

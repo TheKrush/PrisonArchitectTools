@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using PrisonArchitect.Helper;
 
@@ -43,31 +44,30 @@ namespace PrisonArchitect.PrisonFile
         {
             get
             {
-                string s = "";
-
-                if (BlockName == "\"[i 97]\"")
-                    MyConsole.WriteLine(BlockName);
+                StringBuilder stringBuilder = new StringBuilder();
 
                 if (!string.IsNullOrEmpty(BlockName))
-                    s += new String(' ', CurrentDepth) + "BEGIN " + BlockName + Environment.NewLine;
+                    stringBuilder.Append(new string(' ', CurrentDepth)).Append("BEGIN ").Append(BlockName).Append(Environment.NewLine);
 
                 foreach (KeyValuePair<string, object> keyValuePair in Variables)
                 {
-                    foreach (string value in keyValuePair.Value.ToString().Split(','))
+                    object val = keyValuePair.Value;
+                    if (keyValuePair.Value is bool) val = keyValuePair.Value.ToString().ToLower();
+                    foreach (string value in val.ToString().Split(','))
                     {
                         int extraIndent = 0;
                         if (!string.IsNullOrEmpty(BlockName)) extraIndent = 1;
-                        s += new String(' ', CurrentDepth + extraIndent) + keyValuePair.Key + " " + value +
-                             Environment.NewLine;
+
+                        stringBuilder.Append(new string(' ', CurrentDepth + extraIndent)).Append(keyValuePair.Key).Append(" ").Append(value).Append(Environment.NewLine);
                     }
                 }
 
-                s = Blocks.Aggregate(s, (current, block) => current + block.Output);
+                foreach (Block block in Blocks) stringBuilder.Append(block.Output);
 
                 if (!string.IsNullOrEmpty(BlockName))
-                    s += new String(' ', CurrentDepth) + "END" + Environment.NewLine;
+                    stringBuilder.Append(new string(' ', CurrentDepth)).Append("END").Append(Environment.NewLine);
 
-                return s;
+                return stringBuilder.ToString();
             }
         }
 
@@ -156,10 +156,14 @@ namespace PrisonArchitect.PrisonFile
 
         public override string ToString()
         {
-            string s = BlockName + " (" + GetType() + ")" + Environment.NewLine;
-            s = Variables.Aggregate(s, (current, keyValuePair) => current + (new string(' ', 2) + keyValuePair.Key + " : " + keyValuePair.Value + Environment.NewLine));
-            s += new string(' ', 2) + "Blocks : " + Blocks.Count + Environment.NewLine;
-            return s;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(BlockName).Append(" (").Append(GetType()).Append(")").Append(Environment.NewLine);
+            foreach (KeyValuePair<string, object> keyValuePair in Variables)
+                stringBuilder.Append(new string(' ', 2)).Append(keyValuePair.Key).Append(" : ").Append(keyValuePair.Value).Append(Environment.NewLine);
+            stringBuilder.Append(new string(' ', 2)).Append("Blocks : ").Append(Blocks.Count).Append(Environment.NewLine);
+
+            return stringBuilder.ToString();
         }
     }
 }

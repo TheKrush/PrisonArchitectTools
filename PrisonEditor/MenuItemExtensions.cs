@@ -62,9 +62,7 @@ namespace PrisonEditor
             MenuItem menuItem = e.OriginalSource as MenuItem;
             foreach (KeyValuePair<MenuItem, string> item in
                 ElementToGroupNames.Where(item => !Equals(item.Key, menuItem) && item.Value == GetGroupName(menuItem)))
-            {
                 item.Key.IsChecked = false;
-            }
         }
     }
 }

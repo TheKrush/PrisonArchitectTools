@@ -16,8 +16,6 @@ namespace PrisonFileTest
             Console.WriteLine("Parsing .prison file");
             //PrisonFile prisonFile = new PrisonFile(@"C:\Users\Keith\AppData\Local\Introversion\Prison Architect\saves\test2.prison");
             PrisonFile prisonFile = new PrisonFile(@"C:\Users\Keith\AppData\Local\Introversion\Prison Architect\saves\The Last Castle.prison");
-
-            prisonFile.DebugBlocks();
             
             Console.WriteLine("Finished!");
             Console.WriteLine();

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using PrisonArchitect.Helper;
 
 namespace PrisonArchitect.PrisonFile.BlockWrappers.Helper
@@ -35,7 +37,17 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Helper
 
         public string Surname { get { return Variables["Surname"].SafeParse<string>(); } set { Variables["Surname"] = value; } }
 
-        public string Traits { get { return Variables["Traits"].SafeParse<string>(); } set { Variables["Traits"] = value; } }
+        public string Traits
+        {
+            get
+            {
+                string sTraits = Variables["Traits"].SafeParse<string>();
+                if (string.IsNullOrEmpty(sTraits)) return sTraits;
+                sTraits = (new List<string>(sTraits.Split(',')).OrderBy(t => t)).Aggregate("", (current, t) => current + (t + ","));
+                return sTraits.Substring(0, sTraits.LastIndexOf(','));
+            }
+            set { Variables["Traits"] = value; }
+        }
 
         public string Type { get { return Variables["Type"].SafeParse<string>(); } set { Variables["Type"] = value; } }
 
@@ -47,6 +59,8 @@ namespace PrisonArchitect.PrisonFile.BlockWrappers.Helper
 
         public static Color HexToColor(string hexColor)
         {
+            if (string.IsNullOrEmpty(hexColor)) return default(Color);
+
             //Remove # if present
             if (hexColor.IndexOf("0x", StringComparison.Ordinal) != -1)
                 hexColor = hexColor.Replace("0x", "");

@@ -1,4 +1,6 @@
-﻿using PrisonArchitect.Helper;
+﻿using System;
+using System.Text;
+using PrisonArchitect.Helper;
 
 namespace PrisonArchitect.PrisonFile.BlockWrappers.Helper
 {

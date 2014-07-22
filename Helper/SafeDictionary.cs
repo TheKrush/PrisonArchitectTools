@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PrisonArchitect.Helper
 {
@@ -24,6 +25,8 @@ namespace PrisonArchitect.Helper
                 }
             }
         }
+
+        public bool IsDefault(TKey key) { return this[key] == default(TValue); }
 
         public new void Add(TKey key, TValue value)
         {

@@ -1,7 +1,9 @@
-﻿<Window x:Class="PrisonEditor.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:YourNamespace="clr-namespace:PrisonEditor"
-        Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" MinHeight="600" MinWidth="800"
-        Icon="/PrisonEditor;component/icon.png">
+﻿<Window x:Class="PrisonEditor.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:PrisonEditor="clr-namespace:PrisonEditor" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:PrisonFile="clr-namespace:PrisonArchitect.PrisonFile;assembly=PrisonArchitect.PrisonFile" mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=PrisonFile:PrisonFile}" Title="MainWindow"
+        WindowStartupLocation="CenterScreen" Height="600" Width="800" Icon="/PrisonEditor;component/icon.png" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -16,252 +18,234 @@
                 <Separator></Separator>
                 <MenuItem Header="Exit" Click="MenuItemFileExit_Click"></MenuItem>
             </MenuItem>
-            <MenuItem x:Name="MapMenu" Header="Map" IsEnabled="False">
-                <MenuItem Header="Tile Size">
-                    <MenuItem Header="16x16" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
-                              Checked="MenuItemMapTileSize_Checked"></MenuItem>
-                    <MenuItem Header="32x32" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
-                              Checked="MenuItemMapTileSize_Checked" IsChecked="True"></MenuItem>
-                    <MenuItem Header="64x64" IsCheckable="True" YourNamespace:MenuItemExtensions.GroupName="TileSize"
-                              Checked="MenuItemMapTileSize_Checked"></MenuItem>
-                </MenuItem>
-            </MenuItem>
         </Menu>
         <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="2.5">
             <TabControl x:Name="MainTabControl" IsEnabled="False">
-                <TabItem Header="Map" IsSelected="True">
+                <TabItem Header="Map">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition Width="128"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <Canvas x:Name="MapCanvas" Background="Black"
-                                    MouseLeftButtonDown="MapCanvas_LeftButtonMouseDown" MouseMove="MapCanvas_MouseMove" />
-                        </ScrollViewer>
-                        <Grid x:Name="MapOverlayGrid" Grid.Column="0" Background="Black" Opacity="0.75">
-                            <TextBlock x:Name="MapOverlayTextBlock" HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" TextAlignment="Center" Foreground="White" FontSize="50">No prison loaded!</TextBlock>
-                        </Grid>
-                        <Grid Grid.Column="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" BorderBrush="Black" BorderThickness="0.5">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock x:Name="MaterialTextBlock" TextAlignment="Center" Background="Black"
-                                               Foreground="White" Padding="0 2.5 0 2.5">Unknown</TextBlock>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Menu Grid.Row="0">
+                            <MenuItem Header="Tile Size">
+                                <MenuItem Header="16x16" IsCheckable="True" PrisonEditor:MenuItemExtensions.GroupName="TileSize" Checked="MenuItemTileSize_Checked"></MenuItem>
+                                <MenuItem Header="32x32" IsCheckable="True" PrisonEditor:MenuItemExtensions.GroupName="TileSize" Checked="MenuItemTileSize_Checked" IsChecked="True"></MenuItem>
+                                <MenuItem Header="64x64" IsCheckable="True" PrisonEditor:MenuItemExtensions.GroupName="TileSize" Checked="MenuItemTileSize_Checked"></MenuItem>
+                            </MenuItem>
+                            <MenuItem Header="Fill Mode">
+                                <MenuItem Header="Single" IsCheckable="True" PrisonEditor:MenuItemExtensions.GroupName="FillMode" Checked="MenuItemFillMode_Checked" IsChecked="True"></MenuItem>
+                                <MenuItem Header="Bucket" IsCheckable="True" PrisonEditor:MenuItemExtensions.GroupName="FillMode" Checked="MenuItemFillMode_Checked"></MenuItem>
+                            </MenuItem>
+                        </Menu>
+                        <DockPanel Grid.Row="1" LastChildFill="True">
+                            <Grid DockPanel.Dock="Right">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <TextBlock x:Name="MaterialTextBlock" TextAlignment="Center" Background="Black" Foreground="White" Padding="0 2.5 0 2.5">Unknown</TextBlock>
                                     <Image x:Name="MaterialImage" HorizontalAlignment="Center" Width="128" Height="128" />
                                 </StackPanel>
-                            </Border>
-                            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0.5">
-                                <StackPanel x:Name="InOutStackPanel" Orientation="Vertical" Margin="5 5 0 5">
-                                    <RadioButton x:Name="InOutUnchanged" Content="Unchanged" GroupName="Indoor"
-                                                 Checked="RadioButtonIndoor_Checked" IsChecked="True"></RadioButton>
-                                    <RadioButton x:Name="InOutIndoor" Content="Indoor" GroupName="Indoor"
-                                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
-                                    <RadioButton x:Name="InOutOutdoor" Content="Outdoor" GroupName="Indoor"
-                                                 Checked="RadioButtonIndoor_Checked"></RadioButton>
+                                <StackPanel x:Name="InOutStackPanel" Grid.Row="1" Orientation="Vertical" Margin="5 5 0 5">
+                                    <RadioButton x:Name="InOutUnchanged" Content="Unchanged" GroupName="Indoor" Checked="RadioButtonIndoor_Checked" IsChecked="True"></RadioButton>
+                                    <RadioButton x:Name="InOutIndoor" Content="Indoor" GroupName="Indoor" Checked="RadioButtonIndoor_Checked"></RadioButton>
+                                    <RadioButton x:Name="InOutOutdoor" Content="Outdoor" GroupName="Indoor" Checked="RadioButtonIndoor_Checked"></RadioButton>
                                 </StackPanel>
+                                <ListView x:Name="MaterialListView" Grid.Row="2" SelectionMode="Single" SelectionChanged="MaterialListView_SelectionChanged" />
+                            </Grid>
+                            <Border BorderBrush="Black" BorderThickness="2.5">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                    <Canvas x:Name="MapCanvas" Background="Black" MouseLeftButtonDown="MapCanvas_LeftButtonMouseDown" MouseMove="MapCanvas_MouseMove" />
+                                </ScrollViewer>
                             </Border>
-                            <ListView x:Name="MaterialListView" Grid.Row="2" SelectionMode="Single"
-                                      SelectionChanged="MaterialListView_SelectionChanged" />
-                        </Grid>
+                        </DockPanel>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="Finance" Header="Finance">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"></ColumnDefinition>
-                            <ColumnDefinition Width="150"></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">Current Value</TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center">New Value</TextBlock>
-                        
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Balance:</TextBlock>
-                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Balance, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="Balance" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Bank Credit Rating:</TextBlock>
-                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=BankCreditRating, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
-                        <TextBox Grid.Row="2" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="BankCreditRating" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Bank Loan:</TextBlock>
-                        <TextBlock Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=BankLoan, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
-                        <TextBox Grid.Row="3" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="BankLoan" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Exports Today:</TextBlock>
-                        <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ExportsToday, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
-                        <TextBox Grid.Row="4" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="ExportsToday" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Exports Yesterday:</TextBlock>
-                        <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ExportsYesterday, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
-                        <TextBox Grid.Row="5" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="ExportsYesterday" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center">Last Day:</TextBlock>
-                        <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=LastDay, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
-                        <TextBox Grid.Row="6" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="LastDay" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center">Last Hour:</TextBlock>
-                        <TextBlock Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=LastHour, Mode=OneWay, StringFormat='{}{0:#,0.####}'}"></TextBlock>
-                        <TextBox Grid.Row="7" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="LastHour" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center">Ownership:</TextBlock>
-                        <TextBlock Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Ownership, Mode=OneWay, StringFormat='{}{0:#,0.####}%'}"></TextBlock>
-                        <TextBox Grid.Row="8" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="Ownership" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center">Sale Price:</TextBlock>
-                        <TextBlock Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=SalePrice, Mode=OneWay, StringFormat='{}{0:C}'}"></TextBlock>
-                        <TextBox Grid.Row="9" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="SalePrice" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </Grid>
+                <TabItem Header="Prisoners" IsSelected="True">
+                    <DataGrid ItemsSource="{Binding Characters}" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Type" Binding="{Binding Type}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Forname" Binding="{Binding Bio.Forname}" />
+                            <DataGridTextColumn Header="Surname" Binding="{Binding Bio.Surname}" />
+                            <DataGridTextColumn Header="Age" Binding="{Binding Bio.Age, StringFormat={}{0:N0}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="HeadType" Binding="{Binding Bio.HeadType}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="BodyType" Binding="{Binding Bio.BodyType, StringFormat={}{0:N0}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="BodyScale" Binding="{Binding Bio.BodyScale, StringFormat={}{0:N2}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!--
+                            <DataGridTextColumn Header="SkinColour" Binding="{Binding Bio.SkinColour}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="ClothingColour" Binding="{Binding Bio.ClothingColour}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            -->
+                            <DataGridTextColumn Header="Traits" Binding="{Binding Bio.Traits}" />
+                            <DataGridTextColumn Header="Sentence" Binding="{Binding Bio.Sentence, StringFormat={}{0:N0}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Parole" Binding="{Binding Bio.Parole, StringFormat={}{0:N0}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Served" Binding="{Binding Bio.Served, StringFormat={}{0:N2}}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="BodyArmour" Binding="{Binding BodyArmour}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Equipment" Binding="{Binding Equipment}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="SecondaryEquipment" Binding="{Binding SecondaryEquipment}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </TabItem>
-                <TabItem x:Name="Test" Header="Test">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"></ColumnDefinition>
-                            <ColumnDefinition Width="150"></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">TestValue:</TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=TestValue}"></TextBlock>
-                        <TextBox Grid.Row="0" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="TestValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">TestValue2:</TextBlock>
-                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=TestValue2}"></TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="2">
-                            <TextBox.Text>
-                                <Binding Path="TestValue2" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule />
-                                        <ExceptionValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                    </Grid>
+                <TabItem Header="Raw Data">
+                    <UniformGrid Columns="2">
+                        <GroupBox Header="Main">
+                            <DataGrid ItemsSource="{Binding Variables}" CanUserSortColumns="True" IsReadOnly="True"></DataGrid>
+                        </GroupBox>
+                        <GroupBox Header="Finance">
+                            <DataGrid ItemsSource="{Binding Finance.Variables}" IsReadOnly="True"></DataGrid>
+                        </GroupBox>
+                    </UniformGrid>
                 </TabItem>
             </TabControl>
         </Border>
+        <Grid x:Name="OverlayGrid" Grid.Row="1" Grid.Column="0" Background="Black" Opacity="0.75">
+            <TextBlock x:Name="OverlayTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="White" FontSize="50">No prison loaded!</TextBlock>
+        </Grid>
         <StatusBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <StatusBarItem>
                 <TextBlock x:Name="MemoryUsage" />
