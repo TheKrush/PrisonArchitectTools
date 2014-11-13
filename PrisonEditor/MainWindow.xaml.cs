@@ -276,6 +276,7 @@ namespace PrisonEditor
                                            string material = (string) ((object[]) args.Argument)[1];
 
                                            List<Point> points = new List<Point>();
+                                           visitedPoints = new List<Point>();
                                            GetNearByMatchingCells(cell, material, points);
 
                                            args.Result = new object[] {points, material};
@@ -285,23 +286,33 @@ namespace PrisonEditor
                                                        List<Point> points = (List<Point>) ((object[]) args.Result)[0];
                                                        string material = (string) ((object[]) args.Result)[1];
 
-                                                       foreach (Point point in points)
+                                                       bool fill = true;
+                                                       if (_fillMode == EFIllMode.BUCKET && points.Count > 9)
                                                        {
-                                                           MapCell mapCell = MapCanvas.Children.OfType<MapCell>().FirstOrDefault(m => m.X == (int) point.X && m.Y == (int) point.Y);
-                                                           if (mapCell == null) continue;
+                                                           MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Fill " + points.Count + " tiles?", "Fill Confirmation", System.Windows.MessageBoxButton.YesNo);
+                                                           if (messageBoxResult != MessageBoxResult.Yes) fill = false;
+                                                       }
 
-                                                           switch (_inOut)
+                                                       if (fill)
+                                                       {
+                                                           foreach (Point point in points)
                                                            {
-                                                               case EInOut.Unchanged:
-                                                                   break;
-                                                               case EInOut.Indoor:
-                                                                   mapCell.Indoors = true;
-                                                                   break;
-                                                               case EInOut.Outdoor:
-                                                                   mapCell.Indoors = false;
-                                                                   break;
+                                                               MapCell mapCell = MapCanvas.Children.OfType<MapCell>().FirstOrDefault(m => m.X == (int)point.X && m.Y == (int)point.Y);
+                                                               if (mapCell == null) continue;
+
+                                                               switch (_inOut)
+                                                               {
+                                                                   case EInOut.Unchanged:
+                                                                       break;
+                                                                   case EInOut.Indoor:
+                                                                       mapCell.Indoors = true;
+                                                                       break;
+                                                                   case EInOut.Outdoor:
+                                                                       mapCell.Indoors = false;
+                                                                       break;
+                                                               }
+                                                               mapCell.Material = material;
                                                            }
-                                                           mapCell.Material = material;
                                                        }
 
                                                        OverlayGrid.Visibility = Visibility.Collapsed;
@@ -312,11 +323,15 @@ namespace PrisonEditor
             #endregion BackgroundWorker
         }
 
+        private List<Point> visitedPoints = new List<Point>();
         private void GetNearByMatchingCells(Cell cell, string material, List<Point> points, string oldMaterial = "")
         {
             // make sure we only visit each cell once
-            Point point = points.FirstOrDefault(p => (int) p.X == cell.X && (int) p.Y == cell.Y);
+            Point point = visitedPoints.FirstOrDefault(p => (int)p.X == cell.X && (int)p.Y == cell.Y);
             if (point != default(Point)) return;
+
+            // visit cell
+            visitedPoints.Add(new Point(cell.X, cell.Y));
 
             bool indoors = cell.Indoors;
             switch (_inOut)
